@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { NavigationButton } from '../components/NavigationButton';
 import WhatsAppButton from '../components/WhatsAppButton';
 
 interface ImageData {
@@ -130,6 +131,8 @@ export default function Galeria() {
             
             {/* Título */}
             <div className="text-center">
+              <NavigationButton to="/" label="Volver al inicio" />
+              
               <h1 className="text-5xl md:text-6xl font-bold mb-6">
                 <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
                   Galería de Experiencias

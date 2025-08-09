@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { NavigationButton } from '../components/NavigationButton';
 import guidesData from '../data/guides.json';
 import reviewsData from '../data/reviews.json';
 import { Guide } from '../types';
@@ -63,6 +64,11 @@ const GuiaPerfil: React.FC = () => {
                     className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                
+                {/* Botón de navegación */}
+                <div className="absolute top-8 left-8 z-30">
+                    <NavigationButton to="/guias" label="Volver a guías" />
+                </div>
                 
                 {/* Información básica superpuesta */}
                 <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -292,7 +298,7 @@ const GuiaPerfil: React.FC = () => {
                     {/* Sidebar */}
                     <div className="space-y-8">
                         {/* Card de contacto */}
-                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl sticky top-8">
+                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl sticky top-8 z-20">
                             <h3 className="text-2xl font-bold text-slate-800 mb-4">Contactar a {guide.name}</h3>
                             
                             <div className="space-y-4 mb-6">

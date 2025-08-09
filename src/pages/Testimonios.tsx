@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { NavigationButton } from '../components/NavigationButton';
+import { Star, Quote, CheckCircle, Camera } from 'lucide-react';
 import WhatsAppButton from '../components/WhatsAppButton';
 
 export default function Testimonios() {
@@ -144,12 +146,7 @@ export default function Testimonios() {
         
         <div className="relative z-10 pt-20 pb-16 px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <a href="/" className="inline-flex items-center text-emerald-300 hover:text-emerald-200 transition-colors mb-8">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Volver al inicio
-            </a>
+            <NavigationButton to="/" label="Volver al inicio" />
             
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">

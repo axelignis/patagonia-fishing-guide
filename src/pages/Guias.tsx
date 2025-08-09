@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { NavigationButton } from '../components/NavigationButton';
 import guidesData from '../data/guides.json';
 import { Guide } from '../types';
 
@@ -68,6 +69,8 @@ const Guias: React.FC = () => {
                 </div>
                 
                 <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+                    <NavigationButton to="/" label="Volver al inicio" />
+                    
                     <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
                         Nuestros 
                         <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent ml-4">

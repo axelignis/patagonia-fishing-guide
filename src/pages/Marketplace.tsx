@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Filter, Star, Package, Truck, CreditCard } from 'lucide-react';
+import { NavigationButton } from '../components/NavigationButton';
 import productsData from '../data/products.json';
 import { Product } from '../types';
 
@@ -53,6 +54,12 @@ const Marketplace: React.FC = () => {
       <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
+            <NavigationButton 
+              to="/" 
+              label="Volver al inicio" 
+              className="inline-flex items-center text-slate-300 hover:text-white transition-colors mb-8"
+            />
+            
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Marketplace de Pesca
             </h1>
