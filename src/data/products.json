@@ -1,0 +1,161 @@
+[
+  {
+    "id": "p1",
+    "name": "Moscas Artesanales Patagónicas",
+    "category": "señuelos",
+    "price": 2500,
+    "description": "Set de 12 moscas artesanales para trucha y salmón, atadas a mano por maestros locales",
+    "image": "/images/productos/moscas-patagonicas.jpg",
+    "inStock": true,
+    "featured": true,
+    "specifications": {
+      "cantidad": "12 unidades",
+      "especies": "Trucha marrón, trucha arcoíris, salmón",
+      "tipo": "Moscas secas y húmedas"
+    }
+  },
+  {
+    "id": "p2",
+    "name": "Multifilamento Premium 8x",
+    "category": "multifilamentos",
+    "price": 15000,
+    "description": "Línea de multifilamento de 8 hebras para pesca deportiva en aguas patagónicas",
+    "image": "/images/productos/multifilamento-8x.jpg",
+    "inStock": true,
+    "featured": true,
+    "specifications": {
+      "resistencia": "30 lb",
+      "longitud": "300 metros",
+      "color": "Verde musgo",
+      "tipo": "8 hebras PE"
+    }
+  },
+  {
+    "id": "p3",
+    "name": "Caña Patagonia Pro Fly 9'",
+    "category": "cañas",
+    "price": 85000,
+    "description": "Caña de grafito premium para pesca con mosca, diseñada específicamente para ríos patagónicos",
+    "image": "/images/productos/cana-patagonia-pro.jpg",
+    "inStock": true,
+    "featured": true,
+    "specifications": {
+      "longitud": "9 pies",
+      "peso": "5-6 wt",
+      "piezas": "4 secciones",
+      "material": "Grafito IM8"
+    }
+  },
+  {
+    "id": "p4",
+    "name": "Señuelos Spinner Trucha",
+    "category": "señuelos",
+    "price": 4500,
+    "description": "Set de 6 spinners efectivos para trucha en lagos y ríos de la Patagonia",
+    "image": "/images/productos/spinners-trucha.jpg",
+    "inStock": true,
+    "featured": false,
+    "specifications": {
+      "cantidad": "6 unidades",
+      "pesos": "3g, 5g, 7g",
+      "colores": "Dorado, plata, cobre",
+      "anzuelos": "Triple reforzado"
+    }
+  },
+  {
+    "id": "p5",
+    "name": "Reel Científico Patagonia 5/6",
+    "category": "accesorios",
+    "price": 45000,
+    "description": "Reel de aluminio mecanizado para pesca con mosca, resistente a la corrosión",
+    "image": "/images/productos/reel-cientifico.jpg",
+    "inStock": true,
+    "featured": true,
+    "specifications": {
+      "peso": "5-6 wt",
+      "capacidad": "WF6F + 100m backing",
+      "material": "Aluminio aeronáutico",
+      "freno": "Disco sellado"
+    }
+  },
+  {
+    "id": "p6",
+    "name": "Chaleco de Pesca Premium",
+    "category": "accesorios",
+    "price": 32000,
+    "description": "Chaleco técnico con múltiples bolsillos y sistema de flotación integrado",
+    "image": "/images/productos/chaleco-premium.jpg",
+    "inStock": true,
+    "featured": false,
+    "specifications": {
+      "material": "Nylon ripstop",
+      "tallas": "S, M, L, XL",
+      "bolsillos": "12 compartimentos",
+      "flotación": "Espuma EVA"
+    }
+  },
+  {
+    "id": "p7",
+    "name": "Línea de Fly WF6F Patagonia",
+    "category": "multifilamentos",
+    "price": 25000,
+    "description": "Línea flotante profesional para pesca con mosca en aguas frías",
+    "image": "/images/productos/linea-fly-wf6f.jpg",
+    "inStock": true,
+    "featured": false,
+    "specifications": {
+      "tipo": "Weight Forward Floating",
+      "peso": "6 weight",
+      "longitud": "30 metros",
+      "color": "Verde oliva"
+    }
+  },
+  {
+    "id": "p8",
+    "name": "Cucharas Rotativas Salmón",
+    "category": "señuelos",
+    "price": 6500,
+    "description": "Set de cucharas rotativas especialmente diseñadas para salmón chinook y coho",
+    "image": "/images/productos/cucharas-salmon.jpg",
+    "inStock": false,
+    "featured": false,
+    "specifications": {
+      "cantidad": "4 unidades",
+      "tamaños": "2, 3, 4, 5",
+      "colores": "Plata, oro, cobre, rainbow",
+      "especies": "Salmón chinook, coho"
+    }
+  },
+  {
+    "id": "p9",
+    "name": "Caña Spinning Lago 7'6\"",
+    "category": "cañas",
+    "price": 65000,
+    "description": "Caña de spinning de acción media para pesca en lagos patagónicos",
+    "image": "/images/productos/cana-spinning-lago.jpg",
+    "inStock": true,
+    "featured": false,
+    "specifications": {
+      "longitud": "7'6\" pies",
+      "acción": "Media",
+      "peso": "10-25g",
+      "piezas": "2 secciones"
+    }
+  },
+  {
+    "id": "p10",
+    "name": "Kit Accesorios Completo",
+    "category": "accesorios",
+    "price": 28000,
+    "description": "Kit completo con alicates, cortahilos, porta moscas y accesorios esenciales",
+    "image": "/images/productos/kit-accesorios.jpg",
+    "inStock": true,
+    "featured": true,
+    "specifications": {
+      "incluye": "Alicates, cortahilos, porta moscas, desanzuelador",
+      "material": "Acero inoxidable",
+      "estuche": "Nylon resistente al agua",
+      "peso": "450g"
+    }
+  }
+]

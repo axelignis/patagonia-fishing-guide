@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Animación sutil y lenta para el botón del hero */
+@keyframes gentlePulse {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Animaciones para la galería */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación fade-in para elementos dinámicos */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Clases de utilidad para las animaciones */
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}

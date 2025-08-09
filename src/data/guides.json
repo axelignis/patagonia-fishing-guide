@@ -1,0 +1,158 @@
+[
+  {
+    "id": "1",
+    "name": "Carlos Mendoza",
+    "age": 42,
+    "avatar": "/images/pexels-d123x-848737.jpg",
+    "coverImage": "/images/pexels-d123x-848737.jpg",
+    "specialties": ["Pesca con Mosca", "Truchas", "Pesca en Ríos"],
+    "experience": 15,
+    "location": "Puerto Varas, Región de los Lagos",
+    "rating": 4.9,
+    "totalReviews": 127,
+    "pricePerDay": 25000,
+    "languages": ["Español", "Inglés", "Portugués"],
+    "bio": "Guía especializado en pesca con mosca con más de 15 años de experiencia en los lagos y ríos de la Región de los Lagos. Experto en truchas marrones y arcoíris en el Lago Llanquihue y Río Petrohué. Carlos comenzó su pasión por la pesca a los 8 años y ha dedicado su vida a perfeccionar las técnicas de fly fishing en las aguas cristalinas de la Patagonia chilena.",
+    "services": [
+      {
+        "id": "s1",
+        "title": "Pesca con Mosca - Día Completo",
+        "description": "Jornada completa de pesca con mosca en los mejores ríos de Bariloche. Incluye técnicas avanzadas de casting y lectura de aguas.",
+        "price": 25000,
+        "duration": "8 horas",
+        "difficulty": "Intermedio",
+        "maxPeople": 4,
+        "includes": ["Equipo completo", "Almuerzo gourmet", "Transporte", "Fotografías profesionales"]
+      },
+      {
+        "id": "s2",
+        "title": "Clase de Casting",
+        "description": "Aprende las técnicas básicas y avanzadas de lanzamiento con mosca. Perfecto para principiantes.",
+        "price": 8000,
+        "duration": "2 horas",
+        "difficulty": "Principiante",
+        "maxPeople": 6,
+        "includes": ["Caña y reel", "Moscas", "Instrucción personalizada", "Manual de técnicas"]
+      },
+      {
+        "id": "s3",
+        "title": "Expedición de 3 Días",
+        "description": "Aventura completa en ríos remotos con camping y pesca intensiva.",
+        "price": 75000,
+        "duration": "3 días",
+        "difficulty": "Avanzado",
+        "maxPeople": 4,
+        "includes": ["Camping completo", "Todas las comidas", "Equipo profesional", "Guía 24/7"]
+      }
+    ],
+    "certifications": ["Guía Habilitado Nahuel Huapi", "Instructor de Pesca Deportiva", "Primeros Auxilios"],
+    "availability": {},
+    "gallery": [
+      "/images/pexels-d123x-848737.jpg",
+      "/images/pexels-cottonbro-4830248.jpg",
+      "/images/pexels-pixabay-301738.jpg"
+    ],
+    "contactInfo": {
+      "phone": "+54 9 294 456-7890",
+      "email": "carlos.mendoza@patagoniafishing.com",
+      "whatsapp": "+5492944567890"
+    }
+  },
+  {
+    "id": "2",
+    "name": "María Rodríguez",
+    "age": 38,
+    "avatar": "/images/pexels-cottonbro-4828253.jpg",
+    "coverImage": "/images/pexels-cottonbro-4828253.jpg",
+    "specialties": ["Spinning", "Pesca Marina", "Pesca desde Costa"],
+    "experience": 12,
+    "location": "Punta Arenas, Región de Magallanes",
+    "rating": 4.8,
+    "totalReviews": 89,
+    "pricePerDay": 22000,
+    "languages": ["Español", "Inglés", "Portugués"],
+    "bio": "Primera mujer guía certificada de la región austral de Chile. Especialista en pesca marina y técnicas de spinning para salmones en las aguas del Estrecho de Magallanes. María rompió barreras en el mundo de la pesca deportiva y es reconocida por su innovación en técnicas de pesca costera patagónica.",
+    "services": [
+      {
+        "id": "s4",
+        "title": "Pesca Marina - Día Completo",
+        "description": "Expedición marina para especies patagónicas desde embarcación.",
+        "price": 22000,
+        "duration": "8 horas",
+        "difficulty": "Intermedio",
+        "maxPeople": 6,
+        "includes": ["Embarcación", "Equipo de pesca", "Almuerzo", "Bebidas"]
+      },
+      {
+        "id": "s5",
+        "title": "Pesca desde Costa",
+        "description": "Técnicas de spinning desde la costa para principiantes.",
+        "price": 15000,
+        "duration": "6 horas",
+        "difficulty": "Principiante",
+        "maxPeople": 8,
+        "includes": ["Equipo básico", "Señuelos", "Instrucción", "Snack"]
+      }
+    ],
+    "certifications": ["Guía de Pesca Marina", "Primeros Auxilios", "Patrón de Embarcación"],
+    "availability": {},
+    "gallery": [
+      "/images/pexels-cottonbro-4828253.jpg",
+      "/images/pexels-gasparzaldo-11250845.jpg"
+    ],
+    "contactInfo": {
+      "phone": "+54 9 280 123-4567",
+      "email": "maria.rodriguez@patagoniafishing.com",
+      "whatsapp": "+5492801234567"
+    }
+  },
+  {
+    "id": "3",
+    "name": "Jorge Silva",
+    "age": 55,
+    "avatar": "/images/pexels-gasparzaldo-11250845.jpg",
+    "coverImage": "/images/pexels-gasparzaldo-11250845.jpg",
+    "specialties": ["Salmones", "Pesca en Lagos", "Trolling"],
+    "experience": 28,
+    "location": "Villa La Angostura, Patagonia Chile",
+    "rating": 5.0,
+    "totalReviews": 156,
+    "pricePerDay": 30000,
+    "languages": ["Español", "Inglés", "Alemán"],
+    "bio": "Veterano con 28 años de experiencia. Conoce cada rincón de los lagos patagónicos chilenos y sus secretos para la pesca de salmones. Jorge es una leyenda viviente, ha capturado récords personales y enseñado a generaciones de pescadores en las aguas prístinas de la Patagonia austral.",
+    "services": [
+      {
+        "id": "s6",
+        "title": "Pesca de Salmones Premium",
+        "description": "Experiencia exclusiva de pesca de salmones en lagos premium.",
+        "price": 30000,
+        "duration": "8 horas",
+        "difficulty": "Avanzado",
+        "maxPeople": 4,
+        "includes": ["Embarcación premium", "Equipo especializado", "Almuerzo gourmet", "Champagne"]
+      },
+      {
+        "id": "s7",
+        "title": "Trolling Profesional",
+        "description": "Técnicas avanzadas de trolling en lagos patagónicos.",
+        "price": 28000,
+        "duration": "8 horas",
+        "difficulty": "Intermedio",
+        "maxPeople": 6,
+        "includes": ["Embarcación", "Equipo profesional", "Almuerzo", "Coaching personalizado"]
+      }
+    ],
+    "certifications": ["Guía Master Patagónico", "Capitán de Pesca Deportiva", "Record Holder Regional"],
+    "availability": {},
+    "gallery": [
+      "/images/pexels-gasparzaldo-11250845.jpg",
+      "/images/pexels-lum3n-44775-294674.jpg",
+      "/images/pexels-pixabay-39854.jpg"
+    ],
+    "contactInfo": {
+      "phone": "+54 9 294 567-8901",
+      "email": "jorge.silva@patagoniafishing.com",
+      "whatsapp": "+5492945678901"
+    }
+  }
+]

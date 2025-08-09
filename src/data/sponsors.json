@@ -1,0 +1,50 @@
+[
+  {
+    "id": "sp1",
+    "name": "Patagonia Fishing Co.",
+    "logo": "/images/sponsors/patagonia-fishing-logo.png",
+    "website": "https://patagoniafishing.com",
+    "category": "Equipamiento",
+    "description": "Líder en equipamiento de pesca deportiva en la Patagonia"
+  },
+  {
+    "id": "sp2",
+    "name": "Río Grande Outfitters",
+    "logo": "/images/sponsors/rio-grande-logo.png",
+    "website": "https://riograndeoutfitters.cl",
+    "category": "Outfitters",
+    "description": "Especialistas en expediciones de pesca en la Patagonia chilena"
+  },
+  {
+    "id": "sp3",
+    "name": "Mosca Austral",
+    "logo": "/images/sponsors/mosca-austral-logo.png",
+    "website": "https://moscaaustral.com",
+    "category": "Moscas Artesanales",
+    "description": "Moscas artesanales atadas por maestros locales patagónicos"
+  },
+  {
+    "id": "sp4",
+    "name": "Turismo Chile Patagonia",
+    "logo": "/images/sponsors/turismo-chile-logo.png",
+    "website": "https://chile.travel",
+    "category": "Turismo",
+    "description": "Promoción oficial del turismo en la Patagonia chilena"
+  },
+  {
+    "id": "sp5",
+    "name": "Lodge Austral",
+    "logo": "/images/sponsors/lodge-austral-logo.png",
+    "website": "https://lodgeaustral.cl",
+    "category": "Alojamiento",
+    "description": "Lodges premium para pescadores en la Región de los Lagos"
+  },
+  {
+    "id": "sp6",
+    "name": "Scientific Anglers Chile",
+    "logo": "/images/sponsors/scientific-anglers-logo.png",
+    "website": "https://scientificanglers.cl",
+    "category": "Líneas y Equipos",
+    "description": "Líneas de fly fishing y equipamiento técnico profesional"
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "r1",
+    "guideId": "1",
+    "userName": "Alejandra Pérez",
+    "userAvatar": "/images/user1.jpg",
+    "rating": 5,
+    "comment": "Carlos es un guía excepcional. Su conocimiento de los ríos es impresionante y las técnicas que me enseñó mejoraron mi pesca inmediatamente. Recomendado 100%.",
+    "date": "2025-07-15",
+    "photos": ["/images/pexels-d123x-848737.jpg"],
+    "verified": true
+  },
+  {
+    "id": "r2",
+    "guideId": "1", 
+    "userName": "Roberto González",
+    "userAvatar": "/images/user2.jpg",
+    "rating": 5,
+    "comment": "Una experiencia inolvidable. Carlos nos llevó a spots secretos donde pescamos truchas increíbles. Su paciencia para enseñar es admirable.",
+    "date": "2025-07-02",
+    "photos": [],
+    "verified": true
+  },
+  {
+    "id": "r3",
+    "guideId": "2",
+    "userName": "Fernando Martín",
+    "userAvatar": "/images/user3.jpg", 
+    "rating": 5,
+    "comment": "María es una profesional increíble. Su conocimiento del mar y las técnicas de spinning son de primer nivel. Pescamos salmones enormes.",
+    "date": "2025-07-20",
+    "photos": ["/images/pexels-cottonbro-4828253.jpg"],
+    "verified": true
+  },
+  {
+    "id": "r4",
+    "guideId": "3",
+    "userName": "Carolina Silva", 
+    "userAvatar": "/images/user4.jpg",
+    "rating": 5,
+    "comment": "Jorge es una leyenda. Su experiencia de 28 años se nota en cada detalle. Los lagos que conoce son espectaculares y los salmones enormes.",
+    "date": "2025-07-10",
+    "photos": ["/images/pexels-gasparzaldo-11250845.jpg"],
+    "verified": true
+  },
+  {
+    "id": "r5",
+    "guideId": "1",
+    "userName": "Mateo Rodriguez",
+    "userAvatar": "/images/user5.jpg",
+    "rating": 4,
+    "comment": "Excelente jornada de pesca. Carlos es muy profesional y conoce perfectamente la zona. Solo una pequeña demora al inicio, pero el resto perfecto.",
+    "date": "2025-06-28",
+    "photos": [],
+    "verified": true
+  }
+]
