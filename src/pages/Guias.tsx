@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationButton } from '../components/NavigationButton';
-import guidesData from '../data/guides.json';
+import { PriceDisplay } from '../components/PriceDisplay';
+import { listGuides } from '../services/guides';
 import { Guide } from '../types';
 
 const Guias: React.FC = () => {
@@ -12,8 +13,38 @@ const Guias: React.FC = () => {
     const [priceRange, setPriceRange] = useState<string>('Todos');
 
     useEffect(() => {
-        setGuides(guidesData as Guide[]);
-        setFilteredGuides(guidesData as Guide[]);
+        async function fetchGuides() {
+            try {
+                const dbGuides = await listGuides();
+                const mapped: Guide[] = (dbGuides || []).map((g) => ({
+                    id: g.id,
+                    name: g.name,
+                    age: g.age ?? 0,
+                    experience: 0,
+                    specialties: g.specialties ?? [],
+                    location: g.location ?? 'Patagonia',
+                    bio: g.bio ?? '',
+                    avatar: g.avatar_url ?? '/images/pexels-pixabay-301738.jpg',
+                    coverImage: g.cover_url ?? (g.avatar_url ?? '/images/pexels-pixabay-301738.jpg'),
+                    rating: Number(g.rating ?? 0),
+                    totalReviews: Number(g.total_reviews ?? 0),
+                    pricePerDay: Number(g.price_per_day ?? 0),
+                    languages: g.languages ?? [],
+                    certifications: [],
+                    services: [],
+                    availability: {},
+                    gallery: [],
+                    contactInfo: undefined,
+                }));
+                setGuides(mapped);
+                setFilteredGuides(mapped);
+            } catch (err) {
+                // fallback vacío
+                setGuides([]);
+                setFilteredGuides([]);
+            }
+        }
+        fetchGuides();
     }, []);
 
     useEffect(() => {
@@ -58,7 +89,7 @@ const Guias: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900">
             {/* Hero Section */}
-            <section className="relative py-20 overflow-hidden">
+            <section className="relative h-[42vh] min-h-[300px] overflow-hidden">
                 <div className="absolute inset-0">
                     <img
                         src="/images/pexels-cottonbro-4830248.jpg"
@@ -68,11 +99,16 @@ const Guias: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-slate-800/60"></div>
                 </div>
                 
-                <div className="relative z-10 max-w-6xl mx-auto px-4 py-20">
-                    <div className="text-left mb-8">
-                        <NavigationButton to="/" label="Volver al inicio" />
-                    </div>
-                    
+                {/* Botón volver dentro del hero, esquina superior izquierda */}
+                <div className="absolute z-20 top-6 left-6">
+                    <NavigationButton 
+                        to="/" 
+                        label="Volver al inicio" 
+                        className="inline-flex items-center text-emerald-300 hover:text-emerald-200 transition-colors"
+                    />
+                </div>
+
+                <div className="relative z-10 max-w-6xl mx-auto px-4 h-full flex items-center justify-center">
                     <div className="text-center">
                         <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
                             Nuestros 
@@ -166,7 +202,7 @@ const Guias: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredGuides.map((guide: Guide) => (
-                            <div key={guide.id} className="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden hover:scale-105 transition-all duration-500 border border-white/20 hover:bg-white/95 hover:shadow-3xl">
+                            <div key={guide.id} className="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden hover:scale-105 transition-all duration-500 border border-white/20 hover:bg-white/95 hover:shadow-3xl h-full flex flex-col">
                                 <div className="relative">
                                     <img 
                                         src={guide.avatar} 
@@ -181,7 +217,7 @@ const Guias: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="p-6">
+                                <div className="p-6 flex flex-col flex-grow">
                                     <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-emerald-800 transition-colors">
                                         {guide.name}
                                     </h3>
@@ -192,12 +228,12 @@ const Guias: React.FC = () => {
                                         {guide.location}
                                     </p>
 
-                                    <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                                    <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-grow">
                                         {guide.bio.substring(0, 120)}...
                                     </p>
 
                                     {/* Especialidades */}
-                                    <div className="flex flex-wrap gap-2 mb-4">
+                                    <div className="flex flex-wrap gap-2 mb-4 min-h-[2.5rem]">
                                         {guide.specialties.slice(0, 3).map((specialty: string, index: number) => (
                                             <span key={index} className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-full text-xs font-medium text-emerald-700">
                                                 {specialty}
@@ -207,8 +243,13 @@ const Guias: React.FC = () => {
 
                                     {/* Precio y Reviews */}
                                     <div className="flex justify-between items-center mb-4">
-                                        <div className="text-slate-800">
-                                            <span className="text-xl font-bold">${guide.pricePerDay.toLocaleString()}</span>
+                                        <div className="flex items-center gap-1">
+                                            <PriceDisplay 
+                                                price={guide.pricePerDay}
+                                                size="md"
+                                                showBothCurrencies={false}
+                                                className="text-slate-800"
+                                            />
                                             <span className="text-sm text-slate-600">/día</span>
                                         </div>
                                         <div className="text-sm text-slate-600">
@@ -217,7 +258,7 @@ const Guias: React.FC = () => {
                                     </div>
 
                                     {/* Botones */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-3 mt-auto">
                                         <Link
                                             to={`/guia/${guide.id}`}
                                             className="block w-full text-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 transform hover:scale-105"

@@ -6,7 +6,7 @@ const GuiaPractica: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900">
             {/* Hero Section */}
-            <section className="relative py-20 overflow-hidden">
+            <section className="relative h-[40vh] min-h-[280px] overflow-hidden">
                 <div className="absolute inset-0">
                     <img
                         src="/images/pexels-cottonbro-4830248.jpg"
@@ -16,11 +16,16 @@ const GuiaPractica: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-slate-800/60"></div>
                 </div>
                 
-                <div className="relative z-10 max-w-4xl mx-auto px-4">
-                    <div className="text-left mb-8">
-                        <NavigationButton to="/" label="Volver al inicio" />
-                    </div>
-                    
+                {/* Botón volver dentro del hero, esquina superior izquierda */}
+                <div className="absolute z-20 top-6 left-6">
+                    <NavigationButton 
+                        to="/" 
+                        label="Volver al inicio" 
+                        className="inline-flex items-center text-emerald-300 hover:text-emerald-200 transition-colors"
+                    />
+                </div>
+
+                <div className="relative z-10 max-w-4xl mx-auto px-4 h-full flex items-center justify-center">
                     <div className="text-center">
                         <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
                             Guía Práctica

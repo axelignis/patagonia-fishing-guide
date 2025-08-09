@@ -25,6 +25,8 @@ Welcome to the Patagonia Fishing Guide project! This web application offers fish
 - TypeScript: A typed superset of JavaScript that compiles to plain JavaScript.
 - CSS: For styling the application.
 - Axios: For making HTTP requests to fetch data from APIs.
+- Supabase: Postgres + Auth + Storage for admin and guide management.
+- React Query: Data fetching and caching.
 
 ## Setup Instructions
 
@@ -43,6 +45,17 @@ Welcome to the Patagonia Fishing Guide project! This web application offers fish
 4. Start the development server:
    ```
    npm start
+   ```
+
+5. Environment variables for Supabase (create `.env.local`):
+   ```
+   REACT_APP_SUPABASE_URL=your_supabase_url
+   REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+   ```
+
+6. Optional: Seed guides to Supabase from local JSON:
+   ```
+   npm run seed:guides
    ```
 
 ## Usage

@@ -41,6 +41,10 @@ const Home: React.FC = () => {
                         <a href="#como-funciona" className="px-8 py-4 border-2 border-emerald-400 text-emerald-300 text-lg font-semibold rounded-full hover:bg-emerald-400 hover:text-slate-900 transition-all duration-300 transform hover:scale-105">
                             Cómo Funciona
                         </a>
+                        {/* Enlace provisorio al admin */}
+                        <Link to="/admin" className="px-8 py-4 border-2 border-cyan-400 text-cyan-300 text-lg font-semibold rounded-full hover:bg-cyan-400 hover:text-slate-900 transition-all duration-300 transform hover:scale-105">
+                            Ir al Admin
+                        </Link>
                     </div>
                 </div>
             </section>

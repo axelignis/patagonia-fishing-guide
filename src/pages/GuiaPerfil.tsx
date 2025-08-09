@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { NavigationButton } from '../components/NavigationButton';
 import { PriceDisplay } from '../components/PriceDisplay';
-import guidesData from '../data/guides.json';
+import { getGuideById, listServicesByGuide } from '../services/guides';
 import reviewsData from '../data/reviews.json';
 import { Guide } from '../types';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -27,13 +27,52 @@ const GuiaPerfil: React.FC = () => {
     const [showAllReviews, setShowAllReviews] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            const foundGuide = guidesData.find((g: any) => g.id === id) as Guide;
-            setGuide(foundGuide || null);
-            
-            const guideReviews = reviewsData.filter((r: any) => r.guideId === id) as Review[];
-            setReviews(guideReviews);
+        async function load() {
+            if (!id) return;
+            try {
+                const g = await getGuideById(id);
+                if (g) {
+                    const mapped: Guide = {
+                        id: g.id,
+                        name: g.name,
+                        age: g.age ?? 0,
+                        experience: 0,
+                        specialties: g.specialties ?? [],
+                        location: g.location ?? 'Patagonia',
+                        bio: g.bio ?? '',
+                        avatar: g.avatar_url ?? '/images/pexels-pixabay-301738.jpg',
+                        coverImage: g.cover_url ?? (g.avatar_url ?? '/images/pexels-pixabay-301738.jpg'),
+                        rating: Number(g.rating ?? 0),
+                        totalReviews: Number(g.total_reviews ?? 0),
+                        pricePerDay: Number(g.price_per_day ?? 0),
+                        languages: g.languages ?? [],
+                        certifications: [],
+                        services: [],
+                        availability: {},
+                        gallery: [],
+                        contactInfo: undefined,
+                    };
+                    // cargar servicios
+                    const services = await listServicesByGuide(g.id);
+                    mapped.services = services.map((s) => ({
+                        id: s.id,
+                        title: s.title,
+                        description: s.description ?? '',
+                        duration: s.duration ?? '',
+                        difficulty: (s.difficulty as any) || 'Intermedio',
+                        maxPeople: s.max_people ?? 1,
+                        price: s.price ?? 0,
+                        includes: s.includes ?? [],
+                    }));
+                    setGuide(mapped);
+                }
+                const guideReviews = reviewsData.filter((r: any) => r.guideId === id) as Review[];
+                setReviews(guideReviews);
+            } catch (e) {
+                setGuide(null);
+            }
         }
+        load();
     }, [id]);
 
     if (!guide) {

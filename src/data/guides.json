@@ -154,5 +154,93 @@
       "email": "jorge.silva@patagoniafishing.com",
       "whatsapp": "+5492945678901"
     }
+  },
+  {
+    "id": "4",
+    "name": "Lucía Fernández",
+    "age": 29,
+    "avatar": "/images/pexels-arch-1165125.jpg",
+    "coverImage": "/images/pexels-arch-1165125.jpg",
+    "specialties": ["Pesca con Mosca", "Truchas", "Pesca en Lagos"],
+    "experience": 8,
+    "location": "San Martín de los Andes, Patagonia Argentina",
+    "rating": 4.7,
+    "totalReviews": 64,
+    "pricePerDay": 20000,
+    "languages": ["Español", "Inglés"],
+    "bio": "Apasionada por la pesca con mosca y educadora por vocación. Lucía se especializa en enseñar a principiantes en lagos de aguas claras.",
+    "services": [
+      {"id": "s8", "title": "Fly Fishing Intro", "description": "Introducción a la mosca", "price": 18000, "duration": "6 horas", "difficulty": "Principiante", "maxPeople": 4, "includes": ["Equipo básico", "Moscas", "Snack"]}
+    ],
+    "certifications": ["Guía Habilitada", "Primeros Auxilios"],
+    "availability": {},
+    "gallery": ["/images/pexels-arch-1165125.jpg"],
+    "contactInfo": {"phone": "+54 9 2972 111-222", "email": "lucia.fernandez@patagoniafishing.com", "whatsapp": "+5492972111222"}
+  },
+  {
+    "id": "5",
+    "name": "Sebastián Torres",
+    "age": 34,
+    "avatar": "/images/pexels-pixabay-301738.jpg",
+    "coverImage": "/images/pexels-pixabay-301738.jpg",
+    "specialties": ["Spinning", "Pesca en Ríos", "Trolling"],
+    "experience": 10,
+    "location": "Bariloche, Río Negro",
+    "rating": 4.6,
+    "totalReviews": 72,
+    "pricePerDay": 23000,
+    "languages": ["Español"],
+    "bio": "Conocedor experto del Limay y el Manso. Sebastián domina técnicas de spinning y trolling con resultados constantes.",
+    "services": [
+      {"id": "s9", "title": "Spinning en Río Limay", "description": "Jornada completa en correderas", "price": 23000, "duration": "8 horas", "difficulty": "Intermedio", "maxPeople": 3, "includes": ["Señuelos", "Transporte", "Almuerzo"]}
+    ],
+    "certifications": ["Guía Regional", "Primeros Auxilios"],
+    "availability": {},
+    "gallery": ["/images/pexels-pixabay-301738.jpg"],
+    "contactInfo": {"phone": "+54 9 294 222-3333", "email": "sebastian.torres@patagoniafishing.com", "whatsapp": "+5492942223333"}
+  },
+  {
+    "id": "6",
+    "name": "Ana Quiroga",
+    "age": 31,
+    "avatar": "/images/pexels-szafran-18894390.jpg",
+    "coverImage": "/images/pexels-szafran-18894390.jpg",
+    "specialties": ["Pesca en Lagos", "Pesca desde Costa", "Truchas"],
+    "experience": 9,
+    "location": "Esquel, Chubut",
+    "rating": 4.8,
+    "totalReviews": 98,
+    "pricePerDay": 21000,
+    "languages": ["Español", "Inglés"],
+    "bio": "Guía entusiasta con atención al detalle. Ana prioriza seguridad y experiencia personalizada en lagos cordilleranos.",
+    "services": [
+      {"id": "s10", "title": "Costa en Lago Futalaufquen", "description": "Wading y lectura de orillas", "price": 21000, "duration": "7 horas", "difficulty": "Intermedio", "maxPeople": 4, "includes": ["Equipo", "Refrigerio"]}
+    ],
+    "certifications": ["Habilitación Provincial", "RCP"],
+    "availability": {},
+    "gallery": ["/images/pexels-szafran-18894390.jpg"],
+    "contactInfo": {"phone": "+54 9 2945 333-444", "email": "ana.quiroga@patagoniafishing.com", "whatsapp": "+5492945333444"}
+  },
+  {
+    "id": "7",
+    "name": "Tomás Villalba",
+    "age": 45,
+    "avatar": "/images/pexels-pixabay-39854.jpg",
+    "coverImage": "/images/pexels-pixabay-39854.jpg",
+    "specialties": ["Salmones", "Trolling", "Pesca en Lagos"],
+    "experience": 20,
+    "location": "Coyhaique, Aysén",
+    "rating": 4.9,
+    "totalReviews": 134,
+    "pricePerDay": 29000,
+    "languages": ["Español"],
+    "bio": "Especialista en salmones chinook y coho en lagos profundos. Tomás lidera salidas técnicas con alto rendimiento.",
+    "services": [
+      {"id": "s11", "title": "Salmones Técnicos", "description": "Downriggers y líneas plomadas", "price": 29000, "duration": "9 horas", "difficulty": "Avanzado", "maxPeople": 3, "includes": ["Embarcación", "Equipo", "Almuerzo"]}
+    ],
+    "certifications": ["Capitán Deportivo", "Seguridad Náutica"],
+    "availability": {},
+    "gallery": ["/images/pexels-pixabay-39854.jpg"],
+    "contactInfo": {"phone": "+56 9 9999 8888", "email": "tomas.villalba@patagoniafishing.com", "whatsapp": "+56999998888"}
   }
 ]
