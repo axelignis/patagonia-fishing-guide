@@ -365,7 +365,7 @@ const GuiaPerfil: React.FC = () => {
                         </div>
 
                         {/* Estadísticas */}
-                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl">
+                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl sticky top-24 z-30">
                             <h3 className="text-xl font-bold text-slate-800 mb-4">Estadísticas</h3>
                             <div className="space-y-4">
                                 <div className="flex justify-between">
