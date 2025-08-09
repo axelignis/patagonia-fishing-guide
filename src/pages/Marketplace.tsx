@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Filter, Star, Package, Truck, CreditCard } from 'lucide-react';
 import { NavigationButton } from '../components/NavigationButton';
+import { PriceDisplay } from '../components/PriceDisplay';
 import productsData from '../data/products.json';
 import { Product } from '../types';
 
@@ -53,13 +54,15 @@ const Marketplace: React.FC = () => {
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-800 to-slate-700 text-white py-16">
         <div className="container mx-auto px-4">
-          <div className="text-center">
+          <div className="text-left mb-8">
             <NavigationButton 
               to="/" 
               label="Volver al inicio" 
-              className="inline-flex items-center text-slate-300 hover:text-white transition-colors mb-8"
+              className="inline-flex items-center text-slate-300 hover:text-white transition-colors"
             />
-            
+          </div>
+          
+          <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Marketplace de Pesca
             </h1>
@@ -111,9 +114,14 @@ const Marketplace: React.FC = () => {
                         />
                         <div className="flex-1">
                           <h4 className="font-semibold text-sm">{item.product.name}</h4>
-                          <p className="text-gray-600 text-sm">
-                            ${item.product.price.toLocaleString()} x {item.quantity}
-                          </p>
+                          <div className="text-gray-600 text-sm flex items-center gap-1">
+                            <PriceDisplay 
+                              price={item.product.price}
+                              size="sm"
+                              showBothCurrencies={false}
+                            />
+                            <span> x {item.quantity}</span>
+                          </div>
                         </div>
                         <button
                           onClick={() => removeFromCart(item.product.id)}
@@ -127,9 +135,11 @@ const Marketplace: React.FC = () => {
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center mb-4">
                       <span className="font-bold text-lg">Total:</span>
-                      <span className="font-bold text-lg text-emerald-600">
-                        ${getTotalPrice().toLocaleString()}
-                      </span>
+                      <PriceDisplay 
+                        price={getTotalPrice()}
+                        size="md"
+                        showBothCurrencies={true}
+                      />
                     </div>
                     <button className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition-colors">
                       Proceder al Pago
@@ -220,9 +230,11 @@ const Marketplace: React.FC = () => {
                 )}
 
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-emerald-600">
-                    ${product.price.toLocaleString()}
-                  </span>
+                  <PriceDisplay 
+                    price={product.price}
+                    size="md"
+                    showBothCurrencies={true}
+                  />
                   
                   <button
                     onClick={() => addToCart(product)}

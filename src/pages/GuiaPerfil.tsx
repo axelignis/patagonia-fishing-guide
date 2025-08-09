@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { NavigationButton } from '../components/NavigationButton';
+import { PriceDisplay } from '../components/PriceDisplay';
 import guidesData from '../data/guides.json';
 import reviewsData from '../data/reviews.json';
 import { Guide } from '../types';
@@ -188,10 +189,12 @@ const GuiaPerfil: React.FC = () => {
                                             <p className="text-slate-600 mt-2">{guide.services[selectedService].description}</p>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-3xl font-bold text-emerald-600">
-                                                ${guide.services[selectedService].price.toLocaleString()}
-                                            </div>
-                                            <div className="text-sm text-slate-600">por servicio</div>
+                                            <PriceDisplay 
+                                                price={guide.services[selectedService].price}
+                                                size="lg"
+                                                showBothCurrencies={true}
+                                            />
+                                            <div className="text-sm text-slate-600 mt-1">por servicio</div>
                                         </div>
                                     </div>
 
@@ -296,17 +299,19 @@ const GuiaPerfil: React.FC = () => {
                     </div>
 
                     {/* Sidebar */}
-                    <div className="space-y-8">
+                    <div className="space-y-8 sticky top-8">
                         {/* Card de contacto */}
-                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl sticky top-8 z-20">
+                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl z-20">
                             <h3 className="text-2xl font-bold text-slate-800 mb-4">Contactar a {guide.name}</h3>
                             
                             <div className="space-y-4 mb-6">
                                 <div className="text-center">
-                                    <div className="text-3xl font-bold text-emerald-600">
-                                        ${guide.pricePerDay.toLocaleString()}
-                                    </div>
-                                    <div className="text-slate-600">por día</div>
+                                    <PriceDisplay 
+                                        price={guide.pricePerDay}
+                                        size="lg"
+                                        showBothCurrencies={true}
+                                    />
+                                    <div className="text-slate-600 mt-1">por día</div>
                                 </div>
                             </div>
 
@@ -365,7 +370,7 @@ const GuiaPerfil: React.FC = () => {
                         </div>
 
                         {/* Estadísticas */}
-                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl sticky top-24 z-30">
+                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl z-30">
                             <h3 className="text-xl font-bold text-slate-800 mb-4">Estadísticas</h3>
                             <div className="space-y-4">
                                 <div className="flex justify-between">

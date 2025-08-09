@@ -53,7 +53,7 @@ const Guias: React.FC = () => {
     }, [selectedSpecialty, selectedLocation, priceRange, guides]);
 
     const specialties = ['Todos', 'Pesca con Mosca', 'Spinning', 'Salmones', 'Pesca Marina', 'Truchas', 'Pesca en Ríos', 'Pesca en Lagos', 'Trolling', 'Pesca desde Costa'];
-    const locations = ['Todas', 'San Carlos de Bariloche', 'Puerto Madryn', 'Villa La Angostura'];
+    const locations = ['Todas', 'Puerto Varas, Región de los Lagos', 'Punta Arenas, Región de Magallanes', 'Villa La Angostura, Patagonia Chile'];
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900">
@@ -68,18 +68,22 @@ const Guias: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-slate-800/60"></div>
                 </div>
                 
-                <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
-                    <NavigationButton to="/" label="Volver al inicio" />
+                <div className="relative z-10 max-w-6xl mx-auto px-4 py-20">
+                    <div className="text-left mb-8">
+                        <NavigationButton to="/" label="Volver al inicio" />
+                    </div>
                     
-                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                        Nuestros 
-                        <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent ml-4">
-                            Guías Expertos
-                        </span>
-                    </h1>
-                    <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                        Conoce a los mejores guías de pesca de la Patagonia. Cada uno con su especialidad única y años de experiencia en aguas locales.
-                    </p>
+                    <div className="text-center">
+                        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                            Nuestros 
+                            <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent ml-4">
+                                Guías Expertos
+                            </span>
+                        </h1>
+                        <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                            Conoce a los mejores guías de pesca de la Patagonia. Cada uno con su especialidad única y años de experiencia en aguas locales.
+                        </p>
+                    </div>
                 </div>
             </section>
 

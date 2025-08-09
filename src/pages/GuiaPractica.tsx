@@ -16,18 +16,22 @@ const GuiaPractica: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-slate-800/60"></div>
                 </div>
                 
-                <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-                    <NavigationButton to="/" label="Volver al inicio" />
+                <div className="relative z-10 max-w-4xl mx-auto px-4">
+                    <div className="text-left mb-8">
+                        <NavigationButton to="/" label="Volver al inicio" />
+                    </div>
                     
-                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                        Guía Práctica
-                        <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent block">
-                            para Reservar
-                        </span>
-                    </h1>
-                    <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                        Todo lo que necesitas saber para reservar tu aventura de pesca perfecta en la Patagonia
-                    </p>
+                    <div className="text-center">
+                        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                            Guía Práctica
+                            <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent block">
+                                para Reservar
+                            </span>
+                        </h1>
+                        <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                            Todo lo que necesitas saber para reservar tu aventura de pesca perfecta en la Patagonia
+                        </p>
+                    </div>
                 </div>
             </section>
 

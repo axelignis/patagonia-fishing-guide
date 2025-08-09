@@ -145,17 +145,21 @@ export default function Testimonios() {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-cyan-600/10 to-transparent rounded-full blur-3xl"></div>
         
         <div className="relative z-10 pt-20 pb-16 px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <NavigationButton to="/" label="Volver al inicio" />
+          <div className="max-w-4xl mx-auto">
+            <div className="text-left mb-8">
+              <NavigationButton to="/" label="Volver al inicio" />
+            </div>
             
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-                Testimonios
-              </span>
-            </h1>
-            <p className="text-xl text-gray-300 leading-relaxed">
-              Descubre las experiencias de nuestros clientes en la Patagonia
-            </p>
+            <div className="text-center">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+                  Testimonios
+                </span>
+              </h1>
+              <p className="text-xl text-gray-300 leading-relaxed">
+                Descubre las experiencias de nuestros clientes en la Patagonia
+              </p>
+            </div>
           </div>
         </div>
       </div>

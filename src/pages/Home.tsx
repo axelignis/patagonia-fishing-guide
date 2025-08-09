@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import VantaCalmSea from '../components/VantaCalmSea';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { SponsorsSection } from '../components/SponsorsSection';
+import { PriceDisplay } from '../components/PriceDisplay';
 import guidesData from '../data/guides.json';
 import { Guide } from '../types';
 
@@ -87,10 +88,13 @@ const Home: React.FC = () => {
                     <div className="text-center mt-12">
                         <Link 
                             to="/guia-practica" 
-                            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-full shadow-lg hover:from-amber-500 hover:to-orange-500 transition-all duration-300 transform hover:scale-105"
+                            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold rounded-2xl shadow-xl hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-white/20"
                         >
-                            📖 Guía Práctica para Reservar
-                            <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="mr-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            Guía Práctica para Reservar
+                            <svg className="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                         </Link>
@@ -132,8 +136,22 @@ const Home: React.FC = () => {
                                         </span>
                                     ))}
                                 </div>
-                                <div className="text-slate-600 text-sm mb-4">
-                                    {guide.experience} años de experiencia • ${guide.pricePerDay.toLocaleString()}/día
+                                
+                                {/* Experiencia y Precio */}
+                                <div className="mb-4 space-y-3">
+                                    <div className="text-slate-600 text-sm">
+                                        {guide.experience} años de experiencia
+                                    </div>
+                                    <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 p-3 rounded-xl border border-emerald-200">
+                                        <div className="flex items-center justify-between">
+                                            <PriceDisplay 
+                                                price={guide.pricePerDay}
+                                                size="md"
+                                                showBothCurrencies={true}
+                                            />
+                                            <span className="text-slate-600 text-sm font-medium">/día</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <Link to={`/guia/${guide.id}`} className="w-full bg-gradient-to-r from-emerald-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 text-center block">
                                     Ver Perfil

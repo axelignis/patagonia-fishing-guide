@@ -111,28 +111,12 @@ export default function Galeria() {
         <div className="relative z-10 pt-20 pb-16 px-6">
           <div className="max-w-6xl mx-auto">
             {/* Navegación */}
-            <div className="flex items-center justify-between mb-8">
-              <a href="/" className="inline-flex items-center text-emerald-300 hover:text-emerald-200 transition-colors group">
-                <svg className="w-5 h-5 mr-2 transform transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Volver al inicio
-              </a>
-              
-              <div className="flex space-x-4">
-                <a href="/testimonios" className="text-gray-300 hover:text-emerald-300 transition-colors">
-                  Testimonios
-                </a>
-                <a href="/#contacto" className="text-gray-300 hover:text-emerald-300 transition-colors">
-                  Contacto
-                </a>
-              </div>
+            <div className="mb-8">
+              <NavigationButton to="/" label="Volver al inicio" />
             </div>
             
             {/* Título */}
             <div className="text-center">
-              <NavigationButton to="/" label="Volver al inicio" />
-              
               <h1 className="text-5xl md:text-6xl font-bold mb-6">
                 <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
                   Galería de Experiencias
