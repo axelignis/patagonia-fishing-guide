@@ -42,6 +42,17 @@ export type Tables = {
       created_at: string | null;
     };
   };
+  user_profiles: {
+    Row: {
+      id: string;
+      user_id: string;
+      email: string | null;
+      full_name: string | null;
+      role: 'admin' | 'guide' | 'user';
+      created_at: string | null;
+      updated_at: string | null;
+    };
+  };
   guide_services: {
     Row: {
       id: string;

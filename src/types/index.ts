@@ -87,3 +87,37 @@ export interface Booking {
     totalPrice: number;
     notes?: string;
 }
+
+// User Profile types for Supabase
+export interface UserProfile {
+    id: string;
+    email: string;
+    full_name: string | null;
+    role: 'admin' | 'guide' | 'user';
+    created_at: string;
+    updated_at: string;
+    avatar_url?: string | null;
+    hero_image_url?: string | null;
+    // Guide-specific fields
+    bio?: string | null;
+    location?: string | null;
+    experience_years?: number | null;
+    specialties?: string[] | null;
+    languages?: string[] | null;
+    certifications?: string[] | null;
+    price_per_day?: number | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+}
+
+// Image upload types
+export interface ImageUpload {
+    file: File;
+    preview: string;
+}
+
+export interface UploadImageOptions {
+    bucket: 'avatars' | 'hero-images';
+    userId: string;
+    file: File;
+}

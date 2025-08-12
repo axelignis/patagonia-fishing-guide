@@ -1,14 +1,110 @@
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import VantaCalmSea from '../components/VantaCalmSea';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { SponsorsSection } from '../components/SponsorsSection';
 import { PriceDisplay } from '../components/PriceDisplay';
 import guidesData from '../data/guides.json';
 import { Guide } from '../types';
+import { useAuth } from '../hooks/useAuth';
 
 const Home: React.FC = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const { session, profile } = useAuth();
+    const [showAuthError, setShowAuthError] = React.useState(false);
+    const [showProfileMessage, setShowProfileMessage] = React.useState(false);
+    const [isCreatingProfile, setIsCreatingProfile] = React.useState(false);
+
+    // Verificar si hay errores de autenticación en la URL
+    React.useEffect(() => {
+        const errorCode = searchParams.get('error_code');
+        const errorDescription = searchParams.get('error_description');
+        const message = searchParams.get('message');
+        
+        if (errorCode) {
+            setShowAuthError(true);
+            
+            // Limpiar la URL después de mostrar el error
+            setTimeout(() => {
+                setShowAuthError(false);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 5000);
+        }
+
+        // Si hay un mensaje de perfil pendiente y el usuario está autenticado
+        if (message === 'profile_creation_pending' && session && !profile && !isCreatingProfile) {
+            setShowProfileMessage(true);
+            
+            // Solo intentar crear el perfil una vez
+            if (!sessionStorage.getItem('profile_creation_attempted')) {
+                setIsCreatingProfile(true);
+                sessionStorage.setItem('profile_creation_attempted', 'true');
+                createUserProfile();
+            } else {
+                // Si ya se intentó crear, simplemente limpiar la URL y mostrar mensaje
+                console.log('Ya se intentó crear el perfil anteriormente');
+                setTimeout(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    setShowProfileMessage(false);
+                }, 3000);
+            }
+        }
+    }, [searchParams, session, profile, isCreatingProfile]);
+
+    const createUserProfile = async () => {
+        if (!session?.user) return;
+
+        try {
+            const { getSupabaseClient } = await import('../services/supabase');
+            const supabase = getSupabaseClient();
+            
+            console.log('Creando perfil para:', session.user.email);
+            
+            const { error } = await supabase
+                .from('user_profiles')
+                .insert([
+                    {
+                        user_id: session.user.id,
+                        email: session.user.email,
+                        full_name: session.user.user_metadata?.full_name || 'Usuario',
+                        role: 'user'
+                    }
+                ]);
+
+            if (error) {
+                console.error('Error creando perfil:', error);
+                
+                // Si el error es por duplicado, el perfil ya existe
+                if (error.code === '23505') {
+                    console.log('El perfil ya existe, problema de permisos RLS');
+                    setShowProfileMessage(false);
+                    // Mostrar mensaje al usuario sobre el problema de permisos
+                    alert('Tu perfil existe pero hay un problema de permisos. Contacta al administrador.');
+                } else {
+                    setShowProfileMessage(true);
+                }
+            } else {
+                console.log('Perfil creado exitosamente');
+                setShowProfileMessage(false);
+                // Limpiar el flag de intento
+                sessionStorage.removeItem('profile_creation_attempted');
+                // Recargar la página para actualizar el estado
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('Error en createUserProfile:', error);
+            setShowProfileMessage(true);
+        } finally {
+            setIsCreatingProfile(false);
+            // Limpiar la URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    };
+
     // Seleccionar los 3 guías mejor calificados para mostrar en home
     const guides = guidesData as Guide[];
     const featuredGuides = guides
@@ -17,6 +113,41 @@ const Home: React.FC = () => {
 
     return (
         <main className="bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900 min-h-screen font-sans">
+            {/* Error de autenticación */}
+            {showAuthError && (
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                    <div className="flex items-center space-x-2">
+                        <span>⚠️</span>
+                        <span>Error de autenticación. El enlace ha expirado o es inválido.</span>
+                        <button 
+                            onClick={() => navigate('/admin/login')}
+                            className="underline hover:no-underline"
+                        >
+                            Ir al login
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Mensaje de creación de perfil */}
+            {showProfileMessage && (
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                    <div className="flex items-center space-x-2">
+                        {isCreatingProfile ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <span>Creando tu perfil...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>✅</span>
+                                <span>Autenticación exitosa. Configurando tu cuenta...</span>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
+
             {/* Hero Section con nueva paleta */}
             <section className="relative flex flex-col items-center justify-center h-[70vh] text-center overflow-hidden">
                 <img

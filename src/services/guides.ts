@@ -1,20 +1,32 @@
 import { getSupabaseClient, Tables } from './supabase';
 
-export async function listGuides(): Promise<Tables['guides']['Row'][]> {
+export async function listGuides(): Promise<any[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from('guides')
-    .select('*')
+    .select(`
+      *,
+      user_profiles (
+        avatar_url,
+        hero_image_url
+      )
+    `)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data ?? [];
 }
 
-export async function getGuideById(id: string): Promise<Tables['guides']['Row'] | null> {
+export async function getGuideById(id: string): Promise<any> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from('guides')
-    .select('*')
+    .select(`
+      *,
+      user_profiles (
+        avatar_url,
+        hero_image_url
+      )
+    `)
     .eq('id', id)
     .single();
   if (error) throw error;
@@ -36,15 +48,24 @@ export async function upsertGuide(payload: Partial<Tables['guides']['Row']>): Pr
       location: payload.location ?? null,
       bio: payload.bio ?? null,
       price_per_day: payload.price_per_day ?? null,
+      age: payload.age ?? null,
+      languages: payload.languages ?? null,
+      specialties: payload.specialties ?? null,
       user_id: sessionUserId,
     } as Partial<Tables['guides']['Row']>;
+
+    console.log('upsertGuide - insertPayload:', insertPayload);
 
     const { data, error } = await supabase
       .from('guides')
       .insert(insertPayload)
       .select()
       .single();
-    if (error) throw new Error(error.message || 'No se pudo crear el guía');
+    if (error) {
+      console.error('upsertGuide - insert error:', error);
+      throw new Error(error.message || 'No se pudo crear el guía');
+    }
+    console.log('upsertGuide - insert success:', data);
     return data as Tables['guides']['Row'];
   }
 
@@ -54,7 +75,12 @@ export async function upsertGuide(payload: Partial<Tables['guides']['Row']>): Pr
     location: payload.location,
     bio: payload.bio,
     price_per_day: payload.price_per_day,
+    age: payload.age,
+    languages: payload.languages,
+    specialties: payload.specialties,
   } as Partial<Tables['guides']['Row']>;
+
+  console.log('upsertGuide - updatePayload:', updatePayload);
 
   const { data, error } = await supabase
     .from('guides')
@@ -62,7 +88,11 @@ export async function upsertGuide(payload: Partial<Tables['guides']['Row']>): Pr
     .eq('id', payload.id as string)
     .select()
     .single();
-  if (error) throw new Error(error.message || 'No se pudo actualizar el guía');
+  if (error) {
+    console.error('upsertGuide - update error:', error);
+    throw new Error(error.message || 'No se pudo actualizar el guía');
+  }
+  console.log('upsertGuide - update success:', data);
   return data as Tables['guides']['Row'];
 }
 
@@ -147,6 +177,58 @@ export async function deleteAvailability(id: string): Promise<void> {
     .delete()
     .eq('id', id);
   if (error) throw error;
+}
+
+export async function getCurrentUserGuide(): Promise<Tables['guides']['Row'] | null> {
+  const supabase = getSupabaseClient();
+  const { data: sessionData } = await supabase.auth.getSession();
+  const sessionUserId = sessionData?.session?.user?.id;
+  
+  console.log('getCurrentUserGuide - sessionUserId:', sessionUserId);
+  
+  if (!sessionUserId) {
+    throw new Error('No hay sesión activa');
+  }
+
+  // Cambiar .single() por .limit(1) para obtener solo el más reciente
+  const { data, error } = await supabase
+    .from('guides')
+    .select('*')
+    .eq('user_id', sessionUserId)
+    .order('created_at', { ascending: false })
+    .limit(1);
+  
+  console.log('getCurrentUserGuide - data:', data);
+  console.log('getCurrentUserGuide - error:', error);
+  
+  if (error) {
+    throw error;
+  }
+  
+  // Retornar el primer resultado o null si no hay ninguno
+  return data && data.length > 0 ? data[0] : null;
+}
+
+export async function getCurrentUserGuides(): Promise<Tables['guides']['Row'][]> {
+  const supabase = getSupabaseClient();
+  const { data: sessionData } = await supabase.auth.getSession();
+  const sessionUserId = sessionData?.session?.user?.id;
+  
+  if (!sessionUserId) {
+    throw new Error('No hay sesión activa');
+  }
+
+  const { data, error } = await supabase
+    .from('guides')
+    .select('*')
+    .eq('user_id', sessionUserId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    throw error;
+  }
+  
+  return data ?? [];
 }
 
 import { Guide } from '../types';

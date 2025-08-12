@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { getGuideById, reassignGuideOwner, upsertGuide } from '../../services/guides';
+import { NavigationButton } from '../../components/NavigationButton';
 
 export default function GuideEdit(): JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +41,7 @@ export default function GuideEdit(): JSX.Element {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900">
       <div className="max-w-3xl mx-auto px-4 py-12">
+        <NavigationButton to="/admin/guides" label="← Volver a guías" />
         <h1 className="text-3xl font-bold text-white mb-8">{isNew ? 'Nuevo Guía' : 'Editar Guía'}</h1>
         <form onSubmit={handleSubmit} className="bg-white/90 rounded-2xl p-6 shadow-2xl space-y-4">
           <div>
@@ -61,21 +63,30 @@ export default function GuideEdit(): JSX.Element {
           <button disabled={loading} type="submit" className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-xl">
             {loading ? 'Guardando...' : 'Guardar'}
           </button>
+          
           {!isNew && (
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  await reassignGuideOwner(id!);
-                  alert('Propiedad reasignada a tu usuario. Ahora puedes guardar.');
-                } catch (err: any) {
-                  alert(`Error: ${err?.message || 'No se pudo reasignar'}`);
-                }
-              }}
-              className="ml-3 px-6 py-3 border-2 border-emerald-600 text-emerald-700 rounded-xl hover:bg-emerald-50"
-            >
-              Reasignar propiedad
-            </button>
+            <>
+              <Link
+                to={`/admin/guides/${id}/services`}
+                className="ml-3 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:scale-[1.02] transition inline-block"
+              >
+                Gestionar Servicios
+              </Link>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await reassignGuideOwner(id!);
+                    alert('Propiedad reasignada a tu usuario. Ahora puedes guardar.');
+                  } catch (err: any) {
+                    alert(`Error: ${err?.message || 'No se pudo reasignar'}`);
+                  }
+                }}
+                className="ml-3 px-6 py-3 border-2 border-emerald-600 text-emerald-700 rounded-xl hover:bg-emerald-50"
+              >
+                Reasignar propiedad
+              </button>
+            </>
           )}
         </form>
       </div>

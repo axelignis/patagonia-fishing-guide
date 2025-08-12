@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { listGuides } from '../../services/guides';
 import { Link } from 'react-router-dom';
+import { NavigationButton } from '../../components/NavigationButton';
 
 export default function GuidesList(): JSX.Element {
   const { data, isLoading, error } = useQuery(['guides'], listGuides);
@@ -9,6 +10,7 @@ export default function GuidesList(): JSX.Element {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900">
       <div className="max-w-6xl mx-auto px-4 py-12">
+        <NavigationButton to="/admin" label="← Volver al panel" />
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Guías</h1>
           <Link to="/admin/guides/new" className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-xl">Nuevo</Link>
