@@ -29,11 +29,9 @@ export async function getCurrentUserProfile(): Promise<UserProfile | null> {
     const sessionUserId = sessionData?.session?.user?.id;
     
     if (!sessionUserId) {
-      console.log('No hay sesión activa');
       return null;
     }
 
-    console.log('Buscando perfil para usuario:', sessionUserId);
 
     const { data, error } = await supabase
       .from('user_profiles')
@@ -46,18 +44,15 @@ export async function getCurrentUserProfile(): Promise<UserProfile | null> {
       
       // Si no existe el perfil, crear uno por defecto
       if (error.code === 'PGRST116') {
-        console.log('Perfil no encontrado, creando uno por defecto');
         return await createDefaultUserProfile(sessionUserId);
       }
       throw error;
     }
     
     if (!data || data.length === 0) {
-      console.log('No se encontró perfil, creando uno por defecto');
       return await createDefaultUserProfile(sessionUserId);
     }
 
-    console.log('Perfil encontrado:', data[0]);
     return data[0];
   } catch (error) {
     console.error('Error en getCurrentUserProfile:', error);
@@ -77,7 +72,6 @@ export async function createDefaultUserProfile(userId: string): Promise<UserProf
       role: 'user' as UserRole, // Por defecto todos son usuarios normales
     };
 
-    console.log('Creando perfil con datos:', profileData);
 
     const { data, error } = await supabase
       .from('user_profiles')
@@ -90,7 +84,6 @@ export async function createDefaultUserProfile(userId: string): Promise<UserProf
       throw error;
     }
     
-    console.log('Perfil creado exitosamente:', data);
     return data;
   } catch (error) {
     console.error('Error en createDefaultUserProfile:', error);

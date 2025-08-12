@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Users, CreditCard, CheckCircle, Star, Clock, Fish, ChevronRight, X, User } from 'lucide-react';
 import { Guide, Service } from '../types';
-import guidesData from '../data/guides.json';
+import guidesData from '../data/guides.json'; // fallback local
+import { getGuideById, listServicesByGuide } from '../services/guides';
 
 interface BookingData {
     guideId: string;
@@ -50,28 +51,73 @@ const Reservar: React.FC = () => {
     const serviceParam = searchParams.get('service');
 
     useEffect(() => {
-        const loadGuide = async () => {
+        async function loadGuide() {
+            if (!id) return;
             setLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            if (id) {
-                const foundGuide = guidesData.find(g => g.id === id) as Guide | undefined;
-                setGuide(foundGuide || null);
-                
-                if (serviceParam && foundGuide?.services) {
-                    const service = foundGuide.services.find(s => s.id === serviceParam);
-                    if (service) {
-                        setBookingData(prev => ({
-                            ...prev,
-                            serviceId: serviceParam,
-                            totalPrice: service.price
-                        }));
+            try {
+                // 1. Intentar Supabase
+                const g: any = await getGuideById(id);
+                if (g) {
+                    // Cargar servicios dinámicos
+                    const servicesRaw = await listServicesByGuide(g.id);
+                    const servicesMapped: Service[] = servicesRaw.map((s: any) => ({
+                        id: s.id,
+                        title: s.title,
+                        description: s.description ?? '',
+                        price: s.price ?? 0,
+                        duration: s.duration ?? '',
+                        difficulty: (s.difficulty as any) || 'Intermedio',
+                        maxPeople: s.max_people ?? 1,
+                        includes: s.includes ?? []
+                    }));
+                    const mapped: Guide = {
+                        id: g.id,
+                        name: g.name,
+                        age: g.age ?? 0,
+                        experience: 0,
+                        specialties: g.specialties ?? [],
+                        location: g.location ?? 'Patagonia',
+                        bio: g.bio ?? '',
+                        avatar: (g as any).avatar_url || (g as any).legacy_avatar_url || '/images/pexels-pixabay-301738.jpg',
+                        coverImage: (g as any).hero_image_url || (g as any).cover_url || '/images/pexels-gasparzaldo-11250845.jpg',
+                        rating: Number(g.rating ?? 0),
+                        totalReviews: Number(g.total_reviews ?? 0),
+                        pricePerDay: Number(g.price_per_day ?? 0),
+                        languages: g.languages ?? [],
+                        certifications: [],
+                        services: servicesMapped,
+                        availability: {},
+                        gallery: [],
+                        contactInfo: undefined,
+                    };
+                    setGuide(mapped);
+                    if (serviceParam) {
+                        const svc = servicesMapped.find(s => s.id === serviceParam);
+                        if (svc) {
+                            setBookingData(prev => ({ ...prev, serviceId: svc.id, totalPrice: svc.price }));
+                        }
                     }
+                    return;
                 }
+                // 2. Fallback dataset estático (ids cortas tipo "1")
+                const foundGuide = (guidesData as any as Guide[]).find(gd => gd.id === id);
+                if (foundGuide) {
+                    setGuide(foundGuide);
+                    if (serviceParam) {
+                        const svc = foundGuide.services?.find(s => s.id === serviceParam);
+                        if (svc) setBookingData(prev => ({ ...prev, serviceId: svc.id, totalPrice: svc.price }));
+                    }
+                } else {
+                    setGuide(null);
+                }
+            } catch (e:any) {
+                console.warn('[Reservar] Error cargando guía, fallback estático:', e.message);
+                const foundGuide = (guidesData as any as Guide[]).find(gd => gd.id === id);
+                setGuide(foundGuide || null);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
-        };
-
+        }
         loadGuide();
     }, [id, serviceParam]);
 
@@ -191,13 +237,21 @@ const Reservar: React.FC = () => {
             <div className="bg-slate-900/50 backdrop-blur-sm border-b border-slate-700">
                 <div className="max-w-6xl mx-auto px-4 py-4">
                     <div className="flex items-center justify-between">
-                        <button 
-                            onClick={() => navigate('/guias')}
-                            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                            Volver a Guías
-                        </button>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={() => navigate(`/guia/${guide?.id || id}`)}
+                                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                            >
+                                <ArrowLeft className="w-5 h-5" />
+                                Volver al Perfil
+                            </button>
+                            <button 
+                                onClick={() => navigate('/guias')}
+                                className="hidden md:inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-sm"
+                            >
+                                Lista de Guías
+                            </button>
+                        </div>
                         <div className="flex items-center gap-4">
                             {[1, 2, 3, 4].map((step) => (
                                 <div key={step} className="flex items-center">
@@ -224,46 +278,37 @@ const Reservar: React.FC = () => {
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Main Content */}
                     <div className="lg:col-span-2">
-                        {/* Step 1: Service Selection */}
-                        {currentStep === 1 && (
+                        {/* Step 1: Service Selection (single pre-selected) */}
+                        {currentStep === 1 && selectedService && (
                             <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
                                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
                                     <Fish className="w-6 h-6 text-blue-400" />
-                                    Selecciona tu experiencia
+                                    Servicio seleccionado
                                 </h2>
-                                <div className="space-y-4">
-                                    {guide.services?.map((service) => (
-                                        <div 
-                                            key={service.id}
-                                            onClick={() => handleServiceSelect(service.id)}
-                                            className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-[1.02] ${
-                                                bookingData.serviceId === service.id
-                                                    ? 'border-blue-500 bg-blue-500/10'
-                                                    : 'border-slate-600 bg-slate-700/30 hover:border-slate-500'
-                                            }`}
-                                        >
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex-1">
-                                                    <h3 className="text-lg font-semibold text-white mb-2">{service.title}</h3>
-                                                    <p className="text-gray-300 text-sm mb-3">{service.description}</p>
-                                                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                                                        <span className="flex items-center gap-1">
-                                                            <Clock className="w-4 h-4" />
-                                                            {service.duration}
-                                                        </span>
-                                                        <span className="flex items-center gap-1">
-                                                            <Users className="w-4 h-4" />
-                                                            Max {service.maxPeople} personas
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className="text-2xl font-bold text-green-400">${service.price.toLocaleString()}</div>
-                                                    <div className="text-sm text-gray-400">por persona</div>
-                                                </div>
+                                <div className="p-4 rounded-lg border-2 border-blue-500 bg-blue-500/10">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-semibold text-white mb-2">{selectedService.title}</h3>
+                                            <p className="text-gray-300 text-sm mb-3">{selectedService.description}</p>
+                                            <div className="flex items-center gap-4 text-sm text-gray-400">
+                                                <span className="flex items-center gap-1">
+                                                    <Clock className="w-4 h-4" />
+                                                    {selectedService.duration}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <Users className="w-4 h-4" />
+                                                    Max {selectedService.maxPeople} personas
+                                                </span>
                                             </div>
                                         </div>
-                                    ))}
+                                        <div className="text-right">
+                                            <div className="text-2xl font-bold text-green-400">${selectedService.price.toLocaleString()}</div>
+                                            <div className="text-sm text-gray-400">por persona</div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 text-xs text-gray-400">
+                                        (La selección de servicio ocurre en el perfil del guía)
+                                    </div>
                                 </div>
                             </div>
                         )}

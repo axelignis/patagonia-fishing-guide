@@ -15,6 +15,8 @@ import Dashboard from './pages/admin/Dashboard';
 import GuidesList from './pages/admin/GuidesList';
 import GuideEdit from './pages/admin/GuideEdit';
 import GuideServicesManager from './pages/admin/GuideServicesManager';
+import AllServicesAdmin from './pages/admin/AllServicesAdmin';
+import LegacyServicesRedirect from './routes/LegacyServicesRedirect';
 import GuidePanel from './pages/admin/GuidePanel';
 import UserManagement from './pages/admin/UserManagement';
 import Register from './pages/admin/Register';
@@ -54,7 +56,11 @@ function App() {
                 <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/admin/guides" element={<ProtectedRoute requireAdmin><GuidesList /></ProtectedRoute>} />
                 <Route path="/admin/guides/:id" element={<ProtectedRoute requireAdmin><GuideEdit /></ProtectedRoute>} />
-                <Route path="/admin/guides/:id/services" element={<ProtectedRoute requireAdmin><GuideServicesManager /></ProtectedRoute>} />
+                <Route path="/admin/services" element={<ProtectedRoute requireAdmin><AllServicesAdmin /></ProtectedRoute>} />
+                {/* Nueva ruta para que los guías gestionen sus servicios fuera del espacio /admin */}
+                <Route path="/panel-guia/guides/:id/services" element={<ProtectedRoute requireGuide><GuideServicesManager /></ProtectedRoute>} />
+                {/* Ruta legacy: redirige de forma segura y evita que se use el path admin equivocadamente */}
+                <Route path="/admin/guides/:id/services" element={<LegacyServicesRedirect />} />
                 <Route path="/admin/users" element={<ProtectedRoute requireAdmin><UserManagement /></ProtectedRoute>} />
                 <Route path="/mi-cuenta" element={<ProtectedRoute><GuidePanel /></ProtectedRoute>} />
                 <Route path="/panel-guia" element={<ProtectedRoute><GuidePanel /></ProtectedRoute>} />

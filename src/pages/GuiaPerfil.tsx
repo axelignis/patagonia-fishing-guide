@@ -23,7 +23,8 @@ const GuiaPerfil: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [guide, setGuide] = useState<Guide | null>(null);
     const [reviews, setReviews] = useState<Review[]>([]);
-    const [selectedService, setSelectedService] = useState<number>(0);
+    // Track selected service by id for stability if ordering changes
+    const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
     const [showAllReviews, setShowAllReviews] = useState(false);
 
     useEffect(() => {
@@ -40,8 +41,8 @@ const GuiaPerfil: React.FC = () => {
                         specialties: g.specialties ?? [],
                         location: g.location ?? 'Patagonia',
                         bio: g.bio ?? '',
-                        avatar: g.user_profiles?.avatar_url ?? '/images/pexels-pixabay-301738.jpg',
-                        coverImage: g.user_profiles?.hero_image_url ?? '/images/pexels-gasparzaldo-11250845.jpg',
+                        avatar: (g as any).avatar_url || g.user_profiles?.avatar_url || '/images/pexels-pixabay-301738.jpg',
+                        coverImage: (g as any).hero_image_url || g.user_profiles?.hero_image_url || '/images/pexels-gasparzaldo-11250845.jpg',
                         rating: Number(g.rating ?? 0),
                         totalReviews: Number(g.total_reviews ?? 0),
                         pricePerDay: Number(g.price_per_day ?? 0),
@@ -65,6 +66,9 @@ const GuiaPerfil: React.FC = () => {
                         includes: s.includes ?? [],
                     }));
                     setGuide(mapped);
+                    if (!selectedServiceId && mapped.services.length > 0) {
+                        setSelectedServiceId(mapped.services[0].id);
+                    }
                 }
                 const guideReviews = reviewsData.filter((r: any) => r.guideId === id) as Review[];
                 setReviews(guideReviews);
@@ -73,7 +77,7 @@ const GuiaPerfil: React.FC = () => {
             }
         }
         load();
-    }, [id]);
+    }, [id, selectedServiceId]);
 
     if (!guide) {
         return (
@@ -201,90 +205,77 @@ const GuiaPerfil: React.FC = () => {
                         {/* Servicios */}
                         <section className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
                             <h2 className="text-3xl font-bold text-slate-800 mb-6">Servicios Disponibles</h2>
-                            
-                            {/* Tabs de servicios */}
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                {guide.services?.map((service: any, index: number) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setSelectedService(index)}
-                                        className={`px-4 py-2 rounded-full font-medium transition-all duration-300 ${
-                                            selectedService === index
-                                                ? 'bg-gradient-to-r from-emerald-600 to-cyan-600 text-white'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                        }`}
-                                    >
-                                        {service.title}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Detalles del servicio seleccionado */}
-                            {guide.services && guide.services[selectedService] && (
-                                <div className="border border-emerald-200 rounded-2xl p-6 bg-gradient-to-r from-emerald-50 to-cyan-50">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-slate-800">{guide.services[selectedService].title}</h3>
-                                            <p className="text-slate-600 mt-2">{guide.services[selectedService].description}</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <PriceDisplay 
-                                                price={guide.services[selectedService].price}
-                                                size="lg"
-                                                showBothCurrencies={true}
-                                            />
-                                            <div className="text-sm text-slate-600 mt-1">por servicio</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                        <div className="flex items-center text-slate-600">
-                                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                                            </svg>
-                                            {guide.services[selectedService].duration}
-                                        </div>
-                                        <div className="flex items-center text-slate-600">
-                                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                                            </svg>
-                                            Máx. {guide.services[selectedService].maxPeople} personas
-                                        </div>
-                                        <div className="flex items-center text-slate-600">
-                                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10 2L3 8v10a2 2 0 002 2h4a2 2 0 002-2v-4a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 002 2h4a2 2 0 002-2V8l-7-6z" clipRule="evenodd" />
-                                            </svg>
-                                            {guide.services[selectedService].difficulty}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h4 className="font-semibold text-slate-800 mb-3">Incluye:</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                            {guide.services[selectedService].includes?.map((item: string, idx: number) => (
-                                                <div key={idx} className="flex items-center text-slate-600">
-                                                    <svg className="w-4 h-4 text-emerald-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                    </svg>
-                                                    {item}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-6">
-                                        <Link
-                                            to={`/reservar/${guide.id}?service=${selectedService}`}
-                                            className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 transform hover:scale-105"
+                            <div className="space-y-10">
+                                {(!guide.services || guide.services.length === 0) && (
+                                    <div className="text-slate-600 italic">Este guía aún no ha publicado servicios.</div>
+                                )}
+                                {guide.services?.map((svc: any) => {
+                                    const active = selectedServiceId === svc.id;
+                                    return (
+                                        <div
+                                            key={svc.id}
+                                            onClick={() => setSelectedServiceId(active ? null : svc.id)}
+                                            className={`cursor-pointer rounded-2xl border bg-white/80 shadow-sm transition-colors hover:shadow-md overflow-hidden ${active ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-slate-200 hover:border-emerald-300'}`}
                                         >
-                                            Reservar Este Servicio
-                                            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </Link>
-                                    </div>
-                                </div>
-                            )}
+                                            <div className="flex flex-col md:flex-row gap-6 p-6">
+                                                <div className="w-28 h-28 rounded-xl bg-gradient-to-br from-emerald-100 to-cyan-100 flex items-center justify-center shrink-0 border border-emerald-200">
+                                                    <span className="text-3xl">🎣</span>
+                                                </div>
+                                                <div className="flex-1 flex flex-col gap-3">
+                                                    <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium">
+                                                        <span className="px-2 py-1 rounded bg-emerald-100 text-emerald-700 border border-emerald-200">SERVICIO</span>
+                                                        {svc.duration && (
+                                                            <span className="px-2 py-1 rounded bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
+                                                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+                                                                {svc.duration}
+                                                            </span>
+                                                        )}
+                                                        <span className="px-2 py-1 rounded bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
+                                                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" /></svg>
+                                                            Máx {svc.maxPeople}
+                                                        </span>
+                                                        {svc.difficulty && (
+                                                            <span className="px-2 py-1 rounded bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
+                                                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 2L3 8v10a2 2 0 002 2h4a2 2 0 002-2v-4a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 002 2h4a2 2 0 002-2V8l-7-6z" clipRule="evenodd" /></svg>
+                                                                {svc.difficulty}
+                                                            </span>
+                                                        )}
+                                                        {active && <span className="px-2 py-1 rounded bg-emerald-600 text-white font-semibold">SELECCIONADO</span>}
+                                                    </div>
+                                                    <h3 className="text-xl font-bold text-slate-800 leading-tight">{svc.title}</h3>
+                                                    {svc.description && (
+                                                        <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+                                                            {svc.description}
+                                                        </p>
+                                                    )}
+                                                    {svc.includes && svc.includes.length > 0 && (
+                                                        <div className="flex flex-wrap gap-2 mt-1">
+                                                            {svc.includes.map((inc: string, i: number) => (
+                                                                <span key={i} className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs border border-emerald-100">
+                                                                    {inc}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="w-full md:w-52 flex flex-row md:flex-col items-end md:items-end justify-between md:justify-start gap-4 md:text-right">
+                                                    <div>
+                                                        <PriceDisplay price={svc.price} size="md" showBothCurrencies={true} />
+                                                        <div className="text-xs text-slate-500 mt-1">por servicio</div>
+                                                    </div>
+                                                    <Link
+                                                        to={`/reservar/${guide.id}?service=${svc.id}`}
+                                                        data-service-id={svc.id}
+                                                        className="inline-flex justify-center items-center px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-500 transition-colors shadow focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                                                    >
+                                                        Reservar
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </section>
 
                         {/* Reseñas */}

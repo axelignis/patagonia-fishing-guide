@@ -5,6 +5,8 @@ import { getCurrentUserGuide, getCurrentUserGuides, upsertGuide, listServicesByG
 import { NavigationButton } from '../../components/NavigationButton';
 import { ImageUploader } from '../../components/ImageUploader';
 import { Tables, getSupabaseClient } from '../../services/supabase';
+import { ChileLocationSelector } from '../../components/ChileLocationSelector';
+import { useChileLocations } from '../../hooks/useChileLocations';
 import { useAuth } from '../../hooks/useAuth';
 
 type Guide = Tables['guides']['Row'];
@@ -23,6 +25,8 @@ export default function GuidePanel(): JSX.Element {
     languages: [],
     specialties: []
   });
+  const { regions, getProvinces, getCommunes } = useChileLocations();
+  const [locationCodes, setLocationCodes] = useState<{ region?: string; province?: string; commune?: string }>({});
 
   // Efecto para obtener el user_id actual
   useEffect(() => {
@@ -63,12 +67,10 @@ export default function GuidePanel(): JSX.Element {
   // Mutation para crear/actualizar el perfil
   const upsertMutation = useMutation(
     (guideData: Partial<Guide>) => {
-      console.log('upsertMutation - guideData:', guideData);
       return upsertGuide(guideData);
     },
     {
       onSuccess: (data) => {
-        console.log('upsertMutation - success:', data);
         queryClient.invalidateQueries(['current-user-guide']);
         setIsEditing(false);
       },
@@ -91,9 +93,14 @@ export default function GuidePanel(): JSX.Element {
         languages: guide.languages || [],
         specialties: guide.specialties || []
       });
+      setLocationCodes({
+        region: (guide as any).region_code || undefined,
+        province: (guide as any).province_code || undefined,
+        commune: (guide as any).commune_code || undefined,
+      });
     } else {
       // Crear nuevo perfil
-      setFormData({
+  setFormData({
         name: '',
         location: '',
         bio: '',
@@ -102,6 +109,7 @@ export default function GuidePanel(): JSX.Element {
         languages: [],
         specialties: []
       });
+  setLocationCodes({});
     }
     setIsEditing(true);
   };
@@ -114,35 +122,41 @@ export default function GuidePanel(): JSX.Element {
     }
     
     // Debug: Verificar que los arrays se están enviando correctamente
-    console.log('handleSubmit - formData completo:', formData);
-    console.log('handleSubmit - languages:', formData.languages);
-    console.log('handleSubmit - specialties:', formData.specialties);
     
-    upsertMutation.mutate(formData);
+    // Si no se llenó location manual pero tenemos códigos, construir una cadena amigable
+    let finalLocation = formData.location;
+    if ((!finalLocation || finalLocation.trim() === '') && locationCodes.region) {
+      const regionObj = regions.find(r => r.codigo === locationCodes.region);
+      const provinceObj = locationCodes.province ? getProvinces(locationCodes.region).find(p => p.codigo === locationCodes.province) : null;
+      const communeObj = locationCodes.commune && locationCodes.province ? getCommunes(locationCodes.province).find(c => c.codigo === locationCodes.commune) : null;
+      finalLocation = [communeObj?.nombre, provinceObj?.nombre, regionObj?.nombre].filter(Boolean).join(', ');
+    }
+
+    upsertMutation.mutate({
+      ...formData,
+      location: finalLocation,
+      region_code: locationCodes.region,
+      province_code: locationCodes.province,
+      commune_code: locationCodes.commune,
+    } as any);
   };
 
   const handleLanguagesChange = (value: string) => {
     const languagesArray = value.split(',').map(lang => lang.trim()).filter(lang => lang !== '');
-    console.log('handleLanguagesChange - value:', value);
-    console.log('handleLanguagesChange - languagesArray:', languagesArray);
     setFormData({ ...formData, languages: languagesArray });
   };
 
   const handleSpecialtiesChange = (value: string) => {
     const specialtiesArray = value.split(',').map(spec => spec.trim()).filter(spec => spec !== '');
-    console.log('handleSpecialtiesChange - value:', value);
-    console.log('handleSpecialtiesChange - specialtiesArray:', specialtiesArray);
     setFormData({ ...formData, specialties: specialtiesArray });
   };
 
   const handleAvatarUpload = (imageUrl: string) => {
-    console.log('Avatar uploaded:', imageUrl);
     // Recargar el perfil del usuario para obtener la nueva imagen
     queryClient.invalidateQueries(['current-user-guide']);
   };
 
   const handleHeroImageUpload = (imageUrl: string) => {
-    console.log('Hero image uploaded:', imageUrl);
     // Recargar el perfil del usuario para obtener la nueva imagen
     queryClient.invalidateQueries(['current-user-guide']);
   };
@@ -339,13 +353,24 @@ export default function GuidePanel(): JSX.Element {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Ubicación</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+                    <span>Ubicación</span>
+                    <span className="text-xs text-slate-400">(manual o selector)</span>
+                  </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Ej: Pucón, Cautín, Araucanía"
+                    className="w-full mb-2 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
                     value={formData.location || ''}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   />
+                  <ChileLocationSelector
+                    value={{ region: locationCodes.region, commune: locationCodes.commune }}
+                    onChange={(v: any) => setLocationCodes({ region: v.region, commune: v.commune })}
+                  />
+                  <p className="mt-1 text-xs text-slate-500">
+                    Si dejas el campo manual vacío y seleccionas códigos, se autocompletará al guardar.
+                  </p>
                 </div>
               </div>
 
@@ -425,19 +450,6 @@ export default function GuidePanel(): JSX.Element {
                   Cancelar
                 </button>
                 
-                {/* Debug button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log('🐛 DEBUG - Current formData:', formData);
-                    console.log('🐛 DEBUG - Languages:', formData.languages);
-                    console.log('🐛 DEBUG - Specialties:', formData.specialties);
-                    alert(`Languages: ${JSON.stringify(formData.languages)}\nSpecialties: ${JSON.stringify(formData.specialties)}`);
-                  }}
-                  className="px-4 py-3 bg-yellow-500 text-white rounded-xl text-sm"
-                >
-                  🐛 Debug
-                </button>
               </div>
             </form>
           ) : guide ? (

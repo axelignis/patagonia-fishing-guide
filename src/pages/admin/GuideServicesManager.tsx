@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { listServicesByGuide, upsertService, deleteService } from '../../services/guides';
+import { listServicesByGuide, upsertService, deleteService, approveService, approveAllServicesForGuide, updateServiceApproval } from '../../services/guides';
 import { NavigationButton } from '../../components/NavigationButton';
+import { useAuth } from '../../hooks/useAuth';
 import { Tables } from '../../services/supabase';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
-type Service = Tables['guide_services']['Row'];
+type Service = Tables['guide_services']['Row'] & { approved?: boolean };
 
 export default function GuideServicesManager(): JSX.Element {
   const { id: guideId } = useParams<{ id: string }>();
+  const { isAdmin, profile } = useAuth();
   const queryClient = useQueryClient();
   
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [flash, setFlash] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  useEffect(()=>{
+    if (flash) {
+      const t = setTimeout(()=> setFlash(null), 4000);
+      return ()=> clearTimeout(t);
+    }
+  }, [flash]);
+  // Mostrar ambos estados por defecto para que el guía vea todo
+  const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'all'>('all');
   const [formData, setFormData] = useState<Partial<Service>>({
     title: '',
     description: '',
@@ -29,6 +41,55 @@ export default function GuideServicesManager(): JSX.Element {
     () => listServicesByGuide(guideId!),
     { enabled: !!guideId }
   );
+  const filteredServices = React.useMemo(() => {
+    if (!services) return [] as Service[];
+    let list = services as Service[];
+    if (statusFilter === 'pending') return list.filter(s => !s.approved);
+    if (statusFilter === 'approved') return list.filter(s => s.approved);
+    return list;
+  }, [services, statusFilter]);
+  // Determinar si el guía autenticado es dueño del recurso (comparando user_id del perfil con el guideId de los servicios)
+  const isOwner = React.useMemo(() => {
+    if (!guideId) return false;
+    // Si hay servicios, validar que todos pertenezcan al mismo guideId solicitado
+    if (services && services.length > 0) {
+      return services.every(s => s.guide_id === guideId);
+    }
+    // Si no hay servicios todavía, permitir mientras el usuario tenga perfil (creará los suyos)
+    return !!profile;
+  }, [services, guideId, profile]);
+  const approveMutation = useMutation(
+    (serviceId: string) => approveService(serviceId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['guide-services', guideId]);
+        setFlash({ type: 'success', message: 'Servicio aprobado.' });
+      },
+      onError: (err: any) => setFlash({ type: 'error', message: err?.message || 'No se pudo aprobar' })
+    }
+  );
+
+  const rejectMutation = useMutation(
+    (serviceId: string) => updateServiceApproval(serviceId, false),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['guide-services', guideId]);
+        setFlash({ type: 'success', message: 'Servicio marcado como pendiente.' });
+      },
+      onError: (err: any) => setFlash({ type: 'error', message: err?.message || 'No se pudo actualizar estado' })
+    }
+  );
+
+  const approveAllMutation = useMutation(
+    () => approveAllServicesForGuide(guideId!),
+    {
+      onSuccess: (count: number) => {
+        queryClient.invalidateQueries(['guide-services', guideId]);
+        setFlash({ type: 'success', message: count > 0 ? `${count} servicio(s) aprobado(s).` : 'No había servicios pendientes.' });
+      },
+      onError: (err: any) => setFlash({ type: 'error', message: err?.message || 'No se pudieron aprobar todos' })
+    }
+  );
 
   // Mutation para crear/actualizar servicio
   const upsertMutation = useMutation(
@@ -37,9 +98,10 @@ export default function GuideServicesManager(): JSX.Element {
       onSuccess: () => {
         queryClient.invalidateQueries(['guide-services', guideId]);
         resetForm();
+        setFlash({ type: 'success', message: isEditing ? 'Servicio actualizado.' : 'Servicio creado.' });
       },
       onError: (error: any) => {
-        alert(`Error: ${error?.message || 'No se pudo guardar el servicio'}`);
+        setFlash({ type: 'error', message: error?.message || 'No se pudo guardar el servicio' });
       }
     }
   );
@@ -50,9 +112,10 @@ export default function GuideServicesManager(): JSX.Element {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['guide-services', guideId]);
+        setFlash({ type: 'success', message: 'Servicio eliminado.' });
       },
       onError: (error: any) => {
-        alert(`Error: ${error?.message || 'No se pudo eliminar el servicio'}`);
+        setFlash({ type: 'error', message: error?.message || 'No se pudo eliminar el servicio' });
       }
     }
   );
@@ -96,9 +159,7 @@ export default function GuideServicesManager(): JSX.Element {
   };
 
   const handleDelete = (serviceId: string, title: string) => {
-    if (window.confirm(`¿Estás seguro de eliminar el servicio "${title}"?`)) {
-      deleteMutation.mutate(serviceId);
-    }
+  setPendingDelete({ id: serviceId, title });
   };
 
   const handleIncludesChange = (value: string) => {
@@ -110,20 +171,87 @@ export default function GuideServicesManager(): JSX.Element {
     return <div className="text-red-600">ID de guía no válido</div>;
   }
 
+  const [pendingDelete, setPendingDelete] = useState<{id:string; title:string} | null>(null);
+
+  if (!isAdmin && !isOwner) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="text-red-400 text-2xl mb-4">🚫 Acceso Restringido</div>
+          <div className="text-white mb-6">Solo puedes gestionar tus propios servicios.</div>
+          <button onClick={() => window.location.href = '/panel-guia'} className="w-full px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">Ir a mi Panel</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-800 via-gray-800 to-slate-900">
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <NavigationButton to={`/admin/guides/${guideId}`} label="← Volver al guía" />
+        {isAdmin ? (
+          <NavigationButton to="/admin/guides" label="← Volver a guías" />
+        ) : (
+          <NavigationButton to="/panel-guia" label="← Volver a mi panel" />
+        )}
         
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white">Servicios del Guía</h1>
-          <button
-            onClick={() => setShowForm(true)}
-            className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-xl hover:scale-[1.02] transition"
-          >
-            + Nuevo Servicio
-          </button>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            Servicios del Guía
+            {services && services.length > 0 && (
+              <span className="text-sm bg-white/10 text-white px-3 py-1 rounded-full backdrop-blur">
+                {(services as Service[]).filter(s => !s.approved).length} pendientes
+              </span>
+            )}
+          </h1>
+          <div className="flex gap-3">
+            <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl">
+              {(['pending','approved','all'] as const).map(opt => (
+                <button
+                  key={opt}
+                  onClick={()=>setStatusFilter(opt)}
+                  className={`text-xs px-2 py-1 rounded-lg font-medium transition ${statusFilter===opt ? 'bg-emerald-600 text-white' : 'text-white/70 hover:text-white'}`}
+                >
+                  {opt==='pending'?'Pendientes':opt==='approved'?'Aprobados':'Todos'}
+                </button>
+              ))}
+            </div>
+            {isAdmin && (
+              <button
+                onClick={() => approveAllMutation.mutate()}
+                disabled={approveAllMutation.isLoading || !services || (services as Service[]).filter(s => !s.approved).length === 0}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition disabled:opacity-50"
+              >
+                {approveAllMutation.isLoading ? 'Aprobando...' : 'Aprobar Todos'}
+              </button>
+            )}
+            <button
+              onClick={() => setShowForm(true)}
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-xl hover:scale-[1.02] transition"
+            >
+              + Nuevo Servicio
+            </button>
+          </div>
         </div>
+
+        {flash && (
+          <div className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium shadow-lg border ${flash.type === 'success' ? 'bg-emerald-600/20 border-emerald-500 text-emerald-100' : 'bg-red-600/20 border-red-500 text-red-100'}`}>{flash.message}</div>
+        )}
+        <ConfirmDialog
+          open={!!pendingDelete}
+          title="Eliminar servicio"
+          message={pendingDelete ? `¿Estás seguro de eliminar el servicio "${pendingDelete.title}"? Esta acción no se puede deshacer.` : ''}
+          confirmLabel={deleteMutation.isLoading ? 'Eliminando...' : 'Eliminar'}
+          cancelLabel="Cancelar"
+          variant="danger"
+          loading={deleteMutation.isLoading}
+          onCancel={() => !deleteMutation.isLoading && setPendingDelete(null)}
+          onConfirm={() => {
+            if (pendingDelete) {
+              deleteMutation.mutate(pendingDelete.id, { onSettled: () => setPendingDelete(null) });
+            }
+          }}
+        />
+  {/* Debug panel removido */}
 
         {/* Formulario de servicio */}
         {showForm && (
@@ -237,24 +365,35 @@ export default function GuideServicesManager(): JSX.Element {
         <div className="bg-white/90 rounded-2xl p-6 shadow-2xl">
           {isLoading ? (
             <div className="text-center py-8 text-slate-600">Cargando servicios...</div>
-          ) : services?.length === 0 ? (
+          ) : filteredServices.length === 0 ? (
             <div className="text-center py-8 text-slate-600">
               No hay servicios registrados.
+              {isAdmin && statusFilter !== 'all' && (
+                <div className="mt-4 text-xs text-slate-500">Prueba ver <button onClick={()=>setStatusFilter('all')} className="underline">Todos</button> para confirmar si existen aprobados.</div>
+              )}
               <button
                 onClick={() => setShowForm(true)}
                 className="block mx-auto mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
               >
-                Crear primer servicio
+                {services && services.length > 0 ? 'Crear nuevo servicio' : 'Crear primer servicio'}
               </button>
             </div>
           ) : (
             <div className="space-y-4">
-              {services?.map((service) => (
-                <div key={service.id} className="border border-slate-200 rounded-xl p-4 hover:bg-slate-50 transition">
+        {filteredServices.slice().sort((a,b)=> Number(!!a.approved) - Number(!!b.approved) || a.title.localeCompare(b.title)).map((svc) => {
+                const service = svc as Service;
+                const isApproved = !!service.approved;
+                return (
+                <div key={service.id} className={`border rounded-xl p-4 transition ${isApproved ? 'border-emerald-300 bg-emerald-50/50' : 'border-slate-200 hover:bg-slate-50'}`}>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="font-bold text-slate-800 text-lg">{service.title}</h3>
+                        {isApproved ? (
+                          <span className="px-2 py-1 bg-emerald-600 text-white text-xs rounded-full">Aprobado</span>
+                        ) : (
+                          <span className="px-2 py-1 bg-yellow-500 text-white text-xs rounded-full">Pendiente</span>
+                        )}
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           service.difficulty === 'Principiante' ? 'bg-green-100 text-green-800' :
                           service.difficulty === 'Intermedio' ? 'bg-yellow-100 text-yellow-800' :
@@ -301,7 +440,24 @@ export default function GuideServicesManager(): JSX.Element {
                       )}
                     </div>
                     
-                    <div className="flex gap-2 ml-4">
+                    <div className="flex flex-wrap gap-2 ml-4">
+                      {isAdmin && (
+                        isApproved ? (
+                          <button
+                            onClick={() => rejectMutation.mutate(service.id)}
+                            className="px-3 py-1 bg-yellow-600 text-white text-sm rounded-lg hover:bg-yellow-700 transition"
+                          >
+                            Marcar Pendiente
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => approveMutation.mutate(service.id)}
+                            className="px-3 py-1 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition"
+                          >
+                            Aprobar
+                          </button>
+                        )
+                      )}
                       <button
                         onClick={() => handleEdit(service)}
                         className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
@@ -317,8 +473,7 @@ export default function GuideServicesManager(): JSX.Element {
                       </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                </div>);} )}
             </div>
           )}
         </div>
