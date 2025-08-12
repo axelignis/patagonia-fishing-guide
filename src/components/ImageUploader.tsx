@@ -107,6 +107,18 @@ export function ImageUploader({
 
   const displayImage = preview || currentImageUrl;
 
+  // Si no hay userId todavía, mostrar placeholder deshabilitado
+  if (!userId) {
+    return (
+      <div className={`space-y-2 ${className}`}>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+        <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center text-xs text-gray-400">
+          Cargando usuario...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`space-y-4 ${className}`}>
       <label className="block text-sm font-medium text-gray-700 mb-2">

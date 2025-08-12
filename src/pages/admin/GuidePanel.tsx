@@ -438,7 +438,8 @@ export default function GuidePanel(): JSX.Element {
                 currentImageUrl={profile?.avatar_url}
                 onImageUploaded={handleAvatarUpload}
                 bucket="avatars"
-                userId={profile?.id || currentUserId || ''}
+                // IMPORTANTE: usar user_id (auth.uid) para cumplir política de Storage
+                userId={profile?.user_id || currentUserId || ''}
                 maxWidth={400}
                 maxHeight={400}
                 aspectRatio="square"
@@ -450,7 +451,7 @@ export default function GuidePanel(): JSX.Element {
                 currentImageUrl={profile?.hero_image_url}
                 onImageUploaded={handleHeroImageUpload}
                 bucket="hero-images"
-                userId={profile?.id || currentUserId || ''}
+                userId={profile?.user_id || currentUserId || ''}
                 maxWidth={1200}
                 maxHeight={600}
                 aspectRatio="wide"
