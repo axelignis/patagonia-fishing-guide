@@ -126,9 +126,9 @@ export default function GuidePanel(): JSX.Element {
     // Si no se llenó location manual pero tenemos códigos, construir una cadena amigable
     let finalLocation = formData.location;
     if ((!finalLocation || finalLocation.trim() === '') && locationCodes.region) {
-      const regionObj = regions.find(r => r.codigo === locationCodes.region);
-      const provinceObj = locationCodes.province ? getProvinces(locationCodes.region).find(p => p.codigo === locationCodes.province) : null;
-      const communeObj = locationCodes.commune && locationCodes.province ? getCommunes(locationCodes.province).find(c => c.codigo === locationCodes.commune) : null;
+  const regionObj = regions.find((r: any) => r.codigo === locationCodes.region);
+  const provinceObj = locationCodes.province ? getProvinces(locationCodes.region).find((p: any) => p.codigo === locationCodes.province) : null;
+  const communeObj = locationCodes.commune && locationCodes.province ? getCommunes(locationCodes.province).find((c: any) => c.codigo === locationCodes.commune) : null;
       finalLocation = [communeObj?.nombre, provinceObj?.nombre, regionObj?.nombre].filter(Boolean).join(', ');
     }
 
@@ -300,20 +300,7 @@ export default function GuidePanel(): JSX.Element {
           </div>
         )}
 
-        {/* Mostrar alerta si hay múltiples guías */}
-        {allGuides && allGuides.length > 1 && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-r-lg">
-            <div className="flex">
-              <div>
-                <p className="font-medium">Múltiples perfiles detectados</p>
-                <p className="text-sm">
-                  Tienes {allGuides.length} perfiles de guía. Mostrando el más reciente: "{guide?.name}".
-                  Los otros perfiles: {allGuides.slice(1).map(g => g.name).join(', ')}.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+  {/* Alerta múltiple perfiles removida por simplificación */}
 
         {/* Perfil del Guía */}
         <div className="bg-white/90 rounded-2xl p-6 shadow-2xl mb-8">
