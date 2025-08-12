@@ -13,6 +13,8 @@ interface ImageUploaderProps {
   maxHeight?: number;
   className?: string;
   aspectRatio?: 'square' | 'wide' | 'auto';
+  /** Altura mínima del área de upload (px). Default 200 */
+  minHeight?: number;
 }
 
 export function ImageUploader({
@@ -24,7 +26,8 @@ export function ImageUploader({
   maxWidth = 800,
   maxHeight = 600,
   className = '',
-  aspectRatio = 'auto'
+  aspectRatio = 'auto',
+  minHeight = 200
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -111,10 +114,10 @@ export function ImageUploader({
       </label>
 
       {/* Área de upload */}
-      <div className={`relative border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors hover:border-blue-400 ${getAspectRatioClass()}`}>
+    <div className={`relative border-2 border-dashed border-gray-300 rounded-lg p-4 transition-colors hover:border-blue-400 ${getAspectRatioClass()}`} style={{ minHeight }}>
         {displayImage ? (
           // Mostrar imagen actual o preview
-          <div className="relative w-full h-full min-h-[200px]">
+      <div className="relative w-full h-full">
             <img
               src={displayImage}
               alt="Preview"
@@ -157,7 +160,7 @@ export function ImageUploader({
         ) : (
           // Área de drop/click para subir
           <div 
-            className="w-full h-full min-h-[200px] flex flex-col items-center justify-center cursor-pointer"
+            className="w-full h-full flex flex-col items-center justify-center cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
             <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />

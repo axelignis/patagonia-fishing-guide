@@ -227,82 +227,7 @@ export default function GuidePanel(): JSX.Element {
           )}
         </div>
 
-        {/* Sección de gestión de imágenes */}
-        {(profile || currentUserId) ? (
-          <div className="bg-white/90 rounded-2xl p-6 shadow-2xl mb-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-6">Gestión de Imágenes</h2>
-            
-            {!profile && currentUserId && (
-              <div className="bg-blue-100 border border-blue-400 rounded-lg p-3 mb-4">
-                <p className="text-blue-700 text-sm">
-                  ⚠️ Perfil en carga - usando ID de sesión temporalmente
-                </p>
-              </div>
-            )}
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Foto de perfil */}
-              <div>
-                <ImageUploader
-                  label="Foto de Perfil"
-                  currentImageUrl={profile?.avatar_url}
-                  onImageUploaded={handleAvatarUpload}
-                  bucket="avatars"
-                  userId={profile?.id || currentUserId || ''}
-                  maxWidth={400}
-                  maxHeight={400}
-                  aspectRatio="square"
-                  className="w-full"
-                />
-              </div>
-
-              {/* Imagen Hero */}
-              <div>
-                <ImageUploader
-                  label="Imagen de Portada"
-                  currentImageUrl={profile?.hero_image_url}
-                  onImageUploaded={handleHeroImageUpload}
-                  bucket="hero-images"
-                  userId={profile?.id || currentUserId || ''}
-                  maxWidth={1200}
-                  maxHeight={600}
-                  aspectRatio="wide"
-                  className="w-full"
-                />
-              </div>
-            </div>
-
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>Consejos para mejores resultados:</strong>
-              </p>
-              <ul className="text-sm text-blue-600 mt-2 space-y-1">
-                <li>• <strong>Foto de perfil:</strong> Usa una imagen cuadrada de tu rostro con buena iluminación</li>
-                <li>• <strong>Imagen de portada:</strong> Elige una foto panorámica de tu área de pesca o actividad</li>
-                <li>• Las imágenes se optimizan automáticamente para web</li>
-                <li>• Estas imágenes aparecerán en tu perfil público de guía</li>
-              </ul>
-            </div>
-          </div>
-        ) : (
-          // Simplificar: Solo usar user_id para las imágenes temporalmente
-          <div className="bg-white/90 rounded-2xl p-6 shadow-2xl mb-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-6">Gestión de Imágenes</h2>
-            
-            <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-4 mb-4">
-              <p className="text-yellow-700">
-                <strong>⚠️ Perfil en carga:</strong> Esperando datos del perfil...
-              </p>
-              <p className="text-xs text-yellow-600 mt-1">
-                Se habilitará la subida de imágenes cuando el perfil termine de cargar.
-              </p>
-            </div>
-          </div>
-        )}
-
-  {/* Alerta múltiple perfiles removida por simplificación */}
-
-        {/* Perfil del Guía */}
+  {/* Perfil del Guía (primero) */}
         <div className="bg-white/90 rounded-2xl p-6 shadow-2xl mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-slate-800">Mi Perfil</h2>
@@ -502,6 +427,57 @@ export default function GuidePanel(): JSX.Element {
             </div>
           ) : null}
         </div>
+
+        {/* Sección de gestión de imágenes (ahora debajo de Mi Perfil y más compacta) */}
+        {(profile || currentUserId) ? (
+          <div className="bg-white/90 rounded-2xl p-5 shadow-xl mb-8 border border-slate-100">
+            <h2 className="text-lg font-semibold text-slate-800 mb-4">Imágenes</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ImageUploader
+                label="Foto de Perfil"
+                currentImageUrl={profile?.avatar_url}
+                onImageUploaded={handleAvatarUpload}
+                bucket="avatars"
+                userId={profile?.id || currentUserId || ''}
+                maxWidth={400}
+                maxHeight={400}
+                aspectRatio="square"
+                className="w-full"
+                minHeight={140}
+              />
+              <ImageUploader
+                label="Imagen de Portada"
+                currentImageUrl={profile?.hero_image_url}
+                onImageUploaded={handleHeroImageUpload}
+                bucket="hero-images"
+                userId={profile?.id || currentUserId || ''}
+                maxWidth={1200}
+                maxHeight={600}
+                aspectRatio="wide"
+                className="w-full"
+                minHeight={140}
+              />
+            </div>
+            <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+              <ul className="text-xs text-blue-600 space-y-1">
+                <li><strong>Foto:</strong> imagen cuadrada, buena iluminación.</li>
+                <li><strong>Portada:</strong> panorámica representativa.</li>
+                <li>Se optimizan automáticamente.</li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/90 rounded-2xl p-5 shadow-xl mb-8 border border-slate-100">
+            <h2 className="text-lg font-semibold text-slate-800 mb-4">Imágenes</h2>
+            <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-3 mb-2">
+              <p className="text-yellow-700 text-sm">
+                Cargando perfil para habilitar subida...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Alerta múltiple perfiles removida por simplificación */}
 
         {/* Panel de Gestión - Solo si existe el perfil */}
         {guide && (
