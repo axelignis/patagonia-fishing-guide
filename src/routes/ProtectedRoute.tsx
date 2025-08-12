@@ -17,16 +17,6 @@ export default function ProtectedRoute({
   const { session, loading, isAdmin, canAccessAdmin, profile, role } = useAuth();
 
   // Debug logging
-  console.log('ProtectedRoute - Estado:', {
-    hasSession: !!session,
-    loading,
-    isAdmin,
-    canAccessAdmin,
-    role,
-    profileRole: profile?.role,
-    requireAdmin,
-    requireGuide
-  });
 
   if (loading) {
     return (

@@ -172,10 +172,11 @@ export class ImageService {
   ): Promise<void> {
     const supabase = getSupabaseClient();
     
+    // La relación estable usa user_id como referencia al auth.user
     const { error } = await supabase
       .from('user_profiles')
       .update({ [imageType]: imageUrl })
-      .eq('id', userId);
+      .eq('user_id', userId);
 
     if (error) {
       console.error('Error updating profile image URL:', error);

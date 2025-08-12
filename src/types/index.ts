@@ -121,3 +121,29 @@ export interface UploadImageOptions {
     userId: string;
     file: File;
 }
+
+// --- Chile Administrative Division Types ---
+export interface ChileRegion {
+    codigo: string; // e.g. '01'
+    nombre: string; // e.g. 'Tarapacá'
+}
+
+export interface ChileProvince {
+    codigo: string; // e.g. '011'
+    nombre: string; // Province name
+    regionCodigo: string; // parent region code
+}
+
+export interface ChileCommune {
+    codigo: string; // e.g. '01101'
+    nombre: string; // Commune name
+    regionCodigo: string; // parent region code
+    provinciaCodigo: string; // parent province code
+}
+
+export interface ChileLocationsData {
+    regions: ChileRegion[];
+    provinces: ChileProvince[];
+    communes: ChileCommune[];
+    fetchedAt: number; // timestamp for cache invalidation
+}
