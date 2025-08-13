@@ -9,8 +9,7 @@
     "experience": 15,
     "location": "Puerto Varas, Región de los Lagos",
     "rating": 4.9,
-    "totalReviews": 127,
-    "pricePerDay": 25000,
+  "totalReviews": 127,
     "languages": ["Español", "Inglés", "Portugués"],
     "bio": "Guía especializado en pesca con mosca con más de 15 años de experiencia en los lagos y ríos de la Región de los Lagos. Experto en truchas marrones y arcoíris en el Lago Llanquihue y Río Petrohué. Carlos comenzó su pasión por la pesca a los 8 años y ha dedicado su vida a perfeccionar las técnicas de fly fishing en las aguas cristalinas de la Patagonia chilena.",
     "services": [
@@ -68,8 +67,7 @@
     "experience": 12,
     "location": "Punta Arenas, Región de Magallanes",
     "rating": 4.8,
-    "totalReviews": 89,
-    "pricePerDay": 22000,
+  "totalReviews": 89,
     "languages": ["Español", "Inglés", "Portugués"],
     "bio": "Primera mujer guía certificada de la región austral de Chile. Especialista en pesca marina y técnicas de spinning para salmones en las aguas del Estrecho de Magallanes. María rompió barreras en el mundo de la pesca deportiva y es reconocida por su innovación en técnicas de pesca costera patagónica.",
     "services": [
@@ -116,8 +114,7 @@
     "experience": 28,
     "location": "Villa La Angostura, Patagonia Chile",
     "rating": 5.0,
-    "totalReviews": 156,
-    "pricePerDay": 30000,
+  "totalReviews": 156,
     "languages": ["Español", "Inglés", "Alemán"],
     "bio": "Veterano con 28 años de experiencia. Conoce cada rincón de los lagos patagónicos chilenos y sus secretos para la pesca de salmones. Jorge es una leyenda viviente, ha capturado récords personales y enseñado a generaciones de pescadores en las aguas prístinas de la Patagonia austral.",
     "services": [
@@ -165,8 +162,7 @@
     "experience": 8,
     "location": "San Martín de los Andes, Patagonia Argentina",
     "rating": 4.7,
-    "totalReviews": 64,
-    "pricePerDay": 20000,
+  "totalReviews": 64,
     "languages": ["Español", "Inglés"],
     "bio": "Apasionada por la pesca con mosca y educadora por vocación. Lucía se especializa en enseñar a principiantes en lagos de aguas claras.",
     "services": [
@@ -187,8 +183,7 @@
     "experience": 10,
     "location": "Bariloche, Río Negro",
     "rating": 4.6,
-    "totalReviews": 72,
-    "pricePerDay": 23000,
+  "totalReviews": 72,
     "languages": ["Español"],
     "bio": "Conocedor experto del Limay y el Manso. Sebastián domina técnicas de spinning y trolling con resultados constantes.",
     "services": [
@@ -209,8 +204,7 @@
     "experience": 9,
     "location": "Esquel, Chubut",
     "rating": 4.8,
-    "totalReviews": 98,
-    "pricePerDay": 21000,
+  "totalReviews": 98,
     "languages": ["Español", "Inglés"],
     "bio": "Guía entusiasta con atención al detalle. Ana prioriza seguridad y experiencia personalizada en lagos cordilleranos.",
     "services": [
@@ -231,8 +225,7 @@
     "experience": 20,
     "location": "Coyhaique, Aysén",
     "rating": 4.9,
-    "totalReviews": 134,
-    "pricePerDay": 29000,
+  "totalReviews": 134,
     "languages": ["Español"],
     "bio": "Especialista en salmones chinook y coho en lagos profundos. Tomás lidera salidas técnicas con alto rendimiento.",
     "services": [

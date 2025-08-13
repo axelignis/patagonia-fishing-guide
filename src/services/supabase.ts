@@ -59,7 +59,6 @@ export type Tables = {
       cover_url: string | null;
       bio: string | null;
       location: string | null;
-      price_per_day: number | null;
       rating: number | null;
       total_reviews: number | null;
       languages: string[] | null;
