@@ -8,6 +8,9 @@ import { Tables, getSupabaseClient } from '../../services/supabase';
 import { ChileLocationSelector } from '../../components/ChileLocationSelector';
 import { useChileLocations } from '../../hooks/useChileLocations';
 import { useAuth } from '../../hooks/useAuth';
+import { ImageService } from '../../services/imageService';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import { deleteGuide } from '../../services/guides';
 
 type Guide = Tables['guides']['Row'];
 
@@ -20,13 +23,14 @@ export default function GuidePanel(): JSX.Element {
     name: '',
     location: '',
     bio: '',
-    price_per_day: 0,
     age: null,
     languages: [],
     specialties: []
   });
   const { regions, getProvinces, getCommunes } = useChileLocations();
   const [locationCodes, setLocationCodes] = useState<{ region?: string; province?: string; commune?: string }>({});
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Efecto para obtener el user_id actual
   useEffect(() => {
@@ -88,7 +92,6 @@ export default function GuidePanel(): JSX.Element {
         name: guide.name || '',
         location: guide.location || '',
         bio: guide.bio || '',
-        price_per_day: guide.price_per_day || 0,
         age: guide.age || null,
         languages: guide.languages || [],
         specialties: guide.specialties || []
@@ -104,7 +107,6 @@ export default function GuidePanel(): JSX.Element {
         name: '',
         location: '',
         bio: '',
-        price_per_day: 0,
         age: null,
         languages: [],
         specialties: []
@@ -141,6 +143,47 @@ export default function GuidePanel(): JSX.Element {
     } as any);
   };
 
+  // Estado temporal para nueva UX de idiomas y especialidades (chips)
+  const [languagesInput, setLanguagesInput] = useState('');
+  const [specialtiesInput, setSpecialtiesInput] = useState('');
+
+  const commitToken = (raw: string, field: 'languages' | 'specialties') => {
+    const token = raw.trim();
+    if (!token) return;
+    setFormData(prev => {
+      const current = (prev as any)[field] as string[] | undefined || [];
+      if (current.includes(token)) return prev; // evitar duplicados
+      return { ...prev, [field]: [...current, token] };
+    });
+    if (field === 'languages') setLanguagesInput(''); else setSpecialtiesInput('');
+  };
+
+  const handleTokenKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: 'languages' | 'specialties'
+  ) => {
+    if (e.key === ',' || e.key === 'Enter') {
+      e.preventDefault();
+      commitToken(field === 'languages' ? languagesInput : specialtiesInput, field);
+    } else if (e.key === 'Backspace') {
+      const currentValue = field === 'languages' ? languagesInput : specialtiesInput;
+      if (currentValue === '') {
+        // borrar último chip
+        setFormData(prev => {
+          const current = ([...(prev as any)[field]] as string[]) ;
+          return { ...prev, [field]: current.slice(0, -1) };
+        });
+      }
+    }
+  };
+
+  const removeToken = (field: 'languages' | 'specialties', idx: number) => {
+    setFormData(prev => {
+      const current = ([...(prev as any)[field]] as string[]);
+      return { ...prev, [field]: current.filter((_, i) => i !== idx) };
+    });
+  };
+
   const handleLanguagesChange = (value: string) => {
     const languagesArray = value.split(',').map(lang => lang.trim()).filter(lang => lang !== '');
     setFormData({ ...formData, languages: languagesArray });
@@ -152,14 +195,35 @@ export default function GuidePanel(): JSX.Element {
   };
 
   const handleAvatarUpload = (imageUrl: string) => {
-    // Recargar el perfil del usuario para obtener la nueva imagen
+    if (profile?.user_id) {
+      queryClient.invalidateQueries(['user-profile', profile.user_id]);
+    }
     queryClient.invalidateQueries(['current-user-guide']);
   };
 
   const handleHeroImageUpload = (imageUrl: string) => {
-    // Recargar el perfil del usuario para obtener la nueva imagen
+    if (profile?.user_id) {
+      queryClient.invalidateQueries(['user-profile', profile.user_id]);
+    }
     queryClient.invalidateQueries(['current-user-guide']);
   };
+
+  const handleDeleteProfile = async () => {
+    if (!guide?.id) return;
+    setDeleting(true);
+    try {
+      await deleteGuide(guide.id);
+      queryClient.invalidateQueries(['current-user-guide']);
+      queryClient.invalidateQueries(['current-user-guides']);
+      setShowDeleteDialog(false);
+    } catch (e: any) {
+      alert(e?.message || 'No se pudo eliminar el perfil');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Eliminamos UI de eliminación directa para simplificar la sección y mantener simetría.
 
   if (isLoading) {
     return (
@@ -239,6 +303,14 @@ export default function GuidePanel(): JSX.Element {
                 Editar Perfil
               </button>
             )}
+            {guide && !isEditing && (
+              <button
+                onClick={() => setShowDeleteDialog(true)}
+                className="ml-3 px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+              >
+                Eliminar Perfil
+              </button>
+            )}
           </div>
 
           {!guide && !isEditing ? (
@@ -252,23 +324,33 @@ export default function GuidePanel(): JSX.Element {
               </button>
             </div>
           ) : isEditing ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Nombre *</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
-                    value={formData.name || ''}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Nombre + Edad y Ubicación */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Nombre *</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
+                      value={formData.name || ''}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Edad</label>
+                    <input
+                      type="number"
+                      min="18"
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
+                      value={formData.age || ''}
+                      onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) || null })}
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
-                    <span>Ubicación</span>
-                    <span className="text-xs text-slate-400">(manual o selector)</span>
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Ubicación</label>
                   <input
                     type="text"
                     placeholder="Ej: Pucón, Cautín, Araucanía"
@@ -280,32 +362,9 @@ export default function GuidePanel(): JSX.Element {
                     value={{ region: locationCodes.region, commune: locationCodes.commune }}
                     onChange={(v: any) => setLocationCodes({ region: v.region, commune: v.commune })}
                   />
-                  <p className="mt-1 text-xs text-slate-500">
-                    Si dejas el campo manual vacío y seleccionas códigos, se autocompletará al guardar.
+                  <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                    Puedes escribir la ubicación completa manualmente <span className="font-semibold">o</span> dejar el campo vacío y usar el selector de región y comuna. Si solo usas el selector se completará automáticamente al guardar.
                   </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Edad</label>
-                  <input
-                    type="number"
-                    min="18"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
-                    value={formData.age || ''}
-                    onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) || null })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Precio por día (CLP)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
-                    value={formData.price_per_day || ''}
-                    onChange={(e) => setFormData({ ...formData, price_per_day: Number(e.target.value) || 0 })}
-                  />
                 </div>
               </div>
 
@@ -319,30 +378,49 @@ export default function GuidePanel(): JSX.Element {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Idiomas y Especialidades con chips */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Idiomas (separados por comas)
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Idiomas</label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {formData.languages?.map((lang, idx) => (
+                      <span key={idx} className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                        {lang}
+                        <button type="button" onClick={() => removeToken('languages', idx)} className="text-blue-600 hover:text-blue-900 leading-none">×</button>
+                      </span>
+                    ))}
+                  </div>
                   <input
                     type="text"
-                    placeholder="Español, Inglés, Portugués"
+                    placeholder="Escribe y presiona coma o Enter"
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
-                    value={formData.languages?.join(', ') || ''}
-                    onChange={(e) => handleLanguagesChange(e.target.value)}
+                    value={languagesInput}
+                    onChange={e => setLanguagesInput(e.target.value)}
+                    onKeyDown={e => handleTokenKeyDown(e, 'languages')}
+                    onBlur={() => commitToken(languagesInput, 'languages')}
                   />
+                  <p className="mt-1 text-xs text-slate-500">Ej: Español, Inglés, Portugués</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Especialidades (separadas por comas)
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Especialidades</label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {formData.specialties?.map((spec, idx) => (
+                      <span key={idx} className="flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs">
+                        {spec}
+                        <button type="button" onClick={() => removeToken('specialties', idx)} className="text-emerald-600 hover:text-emerald-900 leading-none">×</button>
+                      </span>
+                    ))}
+                  </div>
                   <input
                     type="text"
-                    placeholder="Pesca con mosca, Spinning, Trolling"
+                    placeholder="Escribe y presiona coma o Enter"
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
-                    value={formData.specialties?.join(', ') || ''}
-                    onChange={(e) => handleSpecialtiesChange(e.target.value)}
+                    value={specialtiesInput}
+                    onChange={e => setSpecialtiesInput(e.target.value)}
+                    onKeyDown={e => handleTokenKeyDown(e, 'specialties')}
+                    onBlur={() => commitToken(specialtiesInput, 'specialties')}
                   />
+                  <p className="mt-1 text-xs text-slate-500">Ej: Pesca con mosca, Spinning</p>
                 </div>
               </div>
 
@@ -366,30 +444,54 @@ export default function GuidePanel(): JSX.Element {
             </form>
           ) : guide ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                  <span className="font-medium text-slate-700">Nombre:</span>
-                  <div className="text-slate-900 font-semibold">{guide.name}</div>
-                </div>
-                {guide.location && (
-                  <div>
-                    <span className="font-medium text-slate-700">Ubicación:</span>
-                    <div className="text-slate-900">{guide.location}</div>
+              {(() => {
+                // Construir string: Ubicación (manual), Comuna, Región siempre que existan y sin duplicados.
+                const regionCode = (guide as any).region_code as string | undefined;
+                const communeCode = (guide as any).commune_code as string | undefined;
+                const manual = (guide.location || '').trim();
+                let regionName: string | undefined;
+                let communeName: string | undefined;
+                if (regionCode) {
+                  const regionObj = regions.find((r: any) => r.codigo === regionCode);
+                  regionName = regionObj?.nombre;
+                  if (communeCode) {
+                    try {
+                      const provinces = getProvinces(regionCode);
+                      outer: for (const prov of provinces) {
+                        const communesList = getCommunes(prov.codigo);
+                        for (const c of communesList) {
+                          if (c.codigo === communeCode) { communeName = c.nombre; break outer; }
+                        }
+                      }
+                    } catch {}
+                  }
+                }
+                const parts: string[] = [];
+                if (manual) parts.push(manual);
+                if (communeName && !parts.some(p => p.toLowerCase().includes(communeName!.toLowerCase()))) parts.push(communeName);
+                if (regionName && !parts.some(p => p.toLowerCase().includes(regionName!.toLowerCase()))) parts.push(regionName);
+                const locationString = parts.join(', ');
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <span className="font-medium text-slate-700">Nombre:</span>
+                      <div className="text-slate-900 font-semibold">{guide.name}</div>
+                    </div>
+                    {locationString && (
+                      <div>
+                        <span className="font-medium text-slate-700">Ubicación:</span>
+                        <div className="text-slate-900">{locationString}</div>
+                      </div>
+                    )}
+                    {guide.age && (
+                      <div>
+                        <span className="font-medium text-slate-700">Edad:</span>
+                        <div className="text-slate-900">{guide.age} años</div>
+                      </div>
+                    )}
                   </div>
-                )}
-                {guide.age && (
-                  <div>
-                    <span className="font-medium text-slate-700">Edad:</span>
-                    <div className="text-slate-900">{guide.age} años</div>
-                  </div>
-                )}
-                {guide.price_per_day && (
-                  <div>
-                    <span className="font-medium text-slate-700">Precio por día:</span>
-                    <div className="text-slate-900">${guide.price_per_day.toLocaleString()} CLP</div>
-                  </div>
-                )}
-              </div>
+                );
+              })()}
 
               {guide.bio && (
                 <div>
@@ -435,7 +537,7 @@ export default function GuidePanel(): JSX.Element {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ImageUploader
                 label="Foto de Perfil"
-                currentImageUrl={profile?.avatar_url}
+                currentImageUrl={guide ? profile?.avatar_url : undefined}
                 onImageUploaded={handleAvatarUpload}
                 bucket="avatars"
                 // IMPORTANTE: usar user_id (auth.uid) para cumplir política de Storage
@@ -445,10 +547,11 @@ export default function GuidePanel(): JSX.Element {
                 aspectRatio="square"
                 className="w-full"
                 minHeight={140}
+                autoUpload={false}
               />
               <ImageUploader
                 label="Imagen de Portada"
-                currentImageUrl={profile?.hero_image_url}
+                currentImageUrl={guide ? profile?.hero_image_url : undefined}
                 onImageUploaded={handleHeroImageUpload}
                 bucket="hero-images"
                 userId={profile?.user_id || currentUserId || ''}
@@ -457,6 +560,7 @@ export default function GuidePanel(): JSX.Element {
                 aspectRatio="wide"
                 className="w-full"
                 minHeight={140}
+                autoUpload={false}
               />
             </div>
             <div className="mt-3 p-3 bg-blue-50 rounded-lg">
@@ -578,6 +682,17 @@ export default function GuidePanel(): JSX.Element {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Eliminar Perfil"
+        message={"Esta acción eliminará tu perfil de guía y sus datos asociados (servicios, disponibilidad).\n¿Deseas continuar?"}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="danger"
+        loading={deleting}
+        onConfirm={handleDeleteProfile}
+        onCancel={() => !deleting && setShowDeleteDialog(false)}
+      />
     </div>
   );
 }

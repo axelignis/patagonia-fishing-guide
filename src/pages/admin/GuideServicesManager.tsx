@@ -166,6 +166,25 @@ export default function GuideServicesManager(): JSX.Element {
     const includesArray = value.split('\n').filter(item => item.trim() !== '');
     setFormData({ ...formData, includes: includesArray });
   };
+  // Nuevo: entrada incremental por Enter y chips removibles
+  const [includesInput, setIncludesInput] = useState('');
+  const commitInclude = () => {
+    const token = includesInput.trim();
+    if (!token) return;
+    setFormData(prev => ({ ...prev, includes: [...(prev.includes||[]).filter(Boolean), token] }));
+    setIncludesInput('');
+  };
+  const handleIncludesKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      commitInclude();
+    } else if (e.key === 'Backspace' && includesInput === '') {
+      setFormData(prev => ({ ...prev, includes: (prev.includes||[]).slice(0,-1) }));
+    }
+  };
+  const removeInclude = (idx: number) => {
+    setFormData(prev => ({ ...prev, includes: (prev.includes||[]).filter((_,i)=> i!==idx) }));
+  };
 
   if (!guideId) {
     return <div className="text-red-600">ID de guía no válido</div>;
@@ -332,13 +351,27 @@ export default function GuideServicesManager(): JSX.Element {
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Incluye (uno por línea)
                 </label>
-                <textarea
+                {/* Chips */}
+                {formData.includes && formData.includes.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {formData.includes.map((inc, idx) => (
+                      <span key={idx} className="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs flex items-center gap-1">
+                        {inc}
+                        <button type="button" className="hover:text-emerald-900" onClick={()=>removeInclude(idx)}>×</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <input
+                  type="text"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500"
-                  rows={4}
-                  placeholder="Transporte&#10;Almuerzo&#10;Equipo de pesca"
-                  value={formData.includes?.join('\n') || ''}
-                  onChange={(e) => handleIncludesChange(e.target.value)}
+                  placeholder="Escribe y Enter para agregar (ej: Transporte)"
+                  value={includesInput}
+                  onChange={e=> setIncludesInput(e.target.value)}
+                  onKeyDown={handleIncludesKeyDown}
+                  onBlur={commitInclude}
                 />
+                <p className="mt-1 text-xs text-slate-500">Presiona Enter para agregar. Backspace con campo vacío elimina el último.</p>
               </div>
 
               <div className="flex gap-3">

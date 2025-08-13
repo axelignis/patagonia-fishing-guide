@@ -22,6 +22,8 @@ export async function listGuides(filters: ListGuidesFilters = {}): Promise<Guide
 
   let base = 'guides_with_profiles';
   let query = supabase.from(base).select('*');
+  // Nota: La vista guides_with_profiles idealmente expone hero_image_url / avatar_url provenientes de user_profiles.
+  // Si no estuvieran presentes, el frontend hará fallback y la sincronización en ImageService actualizará guides.avatar_url / cover_url.
 
   if (filters.is_active !== undefined) query = query.eq('is_active', filters.is_active);
   if (filters.region_code) query = query.eq('region_code', filters.region_code);
@@ -132,7 +134,6 @@ export async function upsertGuide(payload: Partial<Tables['guides']['Row']>): Pr
       name: payload.name ?? '',
       location: payload.location ?? null,
       bio: payload.bio ?? null,
-      price_per_day: payload.price_per_day ?? null,
       age: payload.age ?? null,
       languages: payload.languages ?? null,
       specialties: payload.specialties ?? null,
@@ -160,7 +161,6 @@ export async function upsertGuide(payload: Partial<Tables['guides']['Row']>): Pr
     name: payload.name,
     location: payload.location,
     bio: payload.bio,
-    price_per_day: payload.price_per_day,
     age: payload.age,
     languages: payload.languages,
     specialties: payload.specialties,

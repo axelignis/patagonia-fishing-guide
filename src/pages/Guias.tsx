@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { NavigationButton } from '../components/NavigationButton';
-import { PriceDisplay } from '../components/PriceDisplay';
 import { listGuides, ListGuidesFilters } from '../services/guides';
 import { Guide } from '../types';
 import { ChileLocationSelector } from '../components/ChileLocationSelector';
@@ -42,11 +41,12 @@ const Guias: React.FC = () => {
                     specialties: g.specialties ?? [],
                     location: g.location ?? 'Patagonia',
                     bio: g.bio ?? '',
-                    avatar: g.avatar_url ?? '/images/pexels-pixabay-301738.jpg',
-                    coverImage: g.cover_url ?? (g.avatar_url ?? '/images/pexels-pixabay-301738.jpg'),
+                    // Priorizar campos nuevos en user_profiles (si la vista los expone) y luego legacy
+                    avatar: g.avatar_url || g.user_profiles?.avatar_url || '/images/pexels-pixabay-301738.jpg',
+                    coverImage: g.hero_image_url || g.user_profiles?.hero_image_url || g.cover_url || g.avatar_url || '/images/pexels-pixabay-301738.jpg',
                     rating: Number(g.rating ?? 0),
                     totalReviews: Number(g.total_reviews ?? 0),
-                    pricePerDay: Number(g.price_per_day ?? 0),
+                    // price removed
                     languages: g.languages ?? [],
                     certifications: [],
                     services: [],
@@ -79,20 +79,7 @@ const Guias: React.FC = () => {
     // Filtro adicional por precio se maneja abajo (ubicación ya viene filtrada desde el servidor)
 
         // Filtro por rango de precio
-        if (priceRange !== 'Todos') {
-            filtered = filtered.filter(guide => {
-                switch (priceRange) {
-                    case 'budget':
-                        return guide.pricePerDay <= 20000;
-                    case 'mid':
-                        return guide.pricePerDay > 20000 && guide.pricePerDay <= 27000;
-                    case 'premium':
-                        return guide.pricePerDay > 27000;
-                    default:
-                        return true;
-                }
-            });
-        }
+    // price filtering removed
 
         setFilteredGuides(filtered);
     }, [selectedSpecialty, priceRange, guides]);
@@ -282,20 +269,8 @@ const Guias: React.FC = () => {
                                         )}
                                     </div>
 
-                                    {/* Precio y Reviews */}
-                                    <div className="flex justify-between items-end mb-6">
-                                        <div>
-                                            <div className="flex items-baseline gap-1">
-                                                <PriceDisplay
-                                                    price={guide.pricePerDay}
-                                                    size="md"
-                                                    showBothCurrencies={false}
-                                                    className="text-slate-900"
-                                                />
-                                                <span className="text-xs text-slate-500 mb-0.5">/día</span>
-                                            </div>
-                                            <div className="text-[11px] uppercase tracking-wide text-slate-400 mt-1">Tarifa base</div>
-                                        </div>
+                                    {/* Reviews (precio removido) */}
+                                    <div className="flex justify-end items-end mb-6">
                                         <div className="text-right">
                                             <div className="text-sm font-medium text-slate-700">{guide.totalReviews} reseña{guide.totalReviews!==1?'s':''}</div>
                                             <div className="text-[11px] text-slate-400">Calificación promedio</div>

@@ -81,25 +81,16 @@ export class ImageService {
   /**
    * Valida el archivo de imagen
    */
-  static validateImageFile(file: File): { isValid: boolean; error?: string } {
-    // Validar tipo de archivo
+  static validateImageFile(file: File, options?: { maxSizeMB?: number }): { isValid: boolean; error?: string } {
+    const { maxSizeMB = 5 } = options || {};
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      return {
-        isValid: false,
-        error: 'Formato no válido. Solo se permiten archivos JPEG, PNG y WebP.'
-      };
+      return { isValid: false, error: 'Formato no válido. Solo se permiten archivos JPEG, PNG y WebP.' };
     }
-
-    // Validar tamaño (5MB para avatar, 10MB para hero)
-    const maxSize = 5 * 1024 * 1024; // 5MB por defecto
-    if (file.size > maxSize) {
-      return {
-        isValid: false,
-        error: `El archivo es demasiado grande. Máximo ${maxSize / (1024 * 1024)}MB permitidos.`
-      };
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      return { isValid: false, error: `El archivo es demasiado grande. Máximo ${maxSizeMB}MB permitidos.` };
     }
-
     return { isValid: true };
   }
 
@@ -181,6 +172,43 @@ export class ImageService {
     if (error) {
       console.error('Error updating profile image URL:', error);
       throw new Error(`Error al actualizar ${imageType}: ${error.message}`);
+    }
+
+    // Sincronizar también con columnas legacy en guides (avatar_url / cover_url) para mantener compatibilidad
+    // cover_url se usaba como "hero" en varias vistas antiguas.
+    try {
+      if (imageType === 'avatar_url') {
+        await supabase
+          .from('guides')
+          .update({ avatar_url: imageUrl })
+          .eq('user_id', userId);
+      } else {
+        // hero_image_url => guides.cover_url (legacy)
+        await supabase
+          .from('guides')
+          .update({ cover_url: imageUrl })
+          .eq('user_id', userId);
+      }
+    } catch (e) {
+      // No bloquear flujo si falla (puede ser RLS en estado transitorio); solo log
+      console.warn('Sync guides legacy image fields fallo:', (e as any)?.message);
+    }
+  }
+
+  /** Elimina imagen (avatar o hero) y limpia campo en user_profiles */
+  static async removeProfileImage(userId: string, imageType: 'avatar_url' | 'hero_image_url'): Promise<void> {
+    try {
+      const supabase = getSupabaseClient();
+      // Listar carpeta y eliminar todo
+      const bucket = imageType === 'avatar_url' ? 'avatars' : 'hero-images';
+      const { data: files } = await supabase.storage.from(bucket).list(userId);
+      if (files && files.length > 0) {
+        await supabase.storage.from(bucket).remove(files.map(f => `${userId}/${f.name}`));
+      }
+      await supabase.from('user_profiles').update({ [imageType]: null }).eq('user_id', userId);
+    } catch (e) {
+      console.warn('removeProfileImage error', (e as any)?.message);
+      throw e;
     }
   }
 }
