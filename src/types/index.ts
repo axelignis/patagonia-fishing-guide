@@ -10,7 +10,6 @@ export interface Guide {
     coverImage: string;
     rating: number;
     totalReviews: number;
-    pricePerDay: number;
     languages: string[];
     certifications: string[];
     services: Service[];
@@ -105,7 +104,6 @@ export interface UserProfile {
     specialties?: string[] | null;
     languages?: string[] | null;
     certifications?: string[] | null;
-    price_per_day?: number | null;
     phone?: string | null;
     whatsapp?: string | null;
 }

@@ -45,7 +45,7 @@ const GuiaPerfil: React.FC = () => {
                         coverImage: (g as any).hero_image_url || g.user_profiles?.hero_image_url || '/images/pexels-gasparzaldo-11250845.jpg',
                         rating: Number(g.rating ?? 0),
                         totalReviews: Number(g.total_reviews ?? 0),
-                        pricePerDay: Number(g.price_per_day ?? 0),
+                        // price removed
                         languages: g.languages ?? [],
                         certifications: [],
                         services: [],
@@ -336,11 +336,7 @@ const GuiaPerfil: React.FC = () => {
                             
                             <div className="space-y-4 mb-6">
                                 <div className="text-center">
-                                    <PriceDisplay 
-                                        price={guide.pricePerDay}
-                                        size="lg"
-                                        showBothCurrencies={true}
-                                    />
+                                    {/* price removed */}
                                     <div className="text-slate-600 mt-1">por día</div>
                                 </div>
                             </div>

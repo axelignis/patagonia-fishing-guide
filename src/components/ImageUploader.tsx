@@ -15,6 +15,8 @@ interface ImageUploaderProps {
   aspectRatio?: 'square' | 'wide' | 'auto';
   /** Altura mínima del área de upload (px). Default 200 */
   minHeight?: number;
+  /** Subir inmediatamente al seleccionar (default true). Si false muestra preview y botones. */
+  autoUpload?: boolean;
 }
 
 export function ImageUploader({
@@ -27,64 +29,73 @@ export function ImageUploader({
   maxHeight = 600,
   className = '',
   aspectRatio = 'auto',
-  minHeight = 200
+  minHeight = 200,
+  autoUpload = true
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const processSelectedFile = async (file: File) => {
     setError(null);
-
-    // Validar archivo
-    const validation = ImageService.validateImageFile(file);
+  const validation = ImageService.validateImageFile(file, { maxSizeMB: bucket === 'avatars' ? 5 : 10 });
     if (!validation.isValid) {
       setError(validation.error || 'Archivo no válido');
       return;
     }
+    // Crear preview (siempre)
+    setPreview(URL.createObjectURL(file));
+    setSelectedFile(file);
+    if (autoUpload !== false) {
+      await performUpload(file);
+    }
+  };
 
+  const performUpload = async (fileArg?: File) => {
+    const file = fileArg || selectedFile;
+    if (!file) return;
     try {
       setUploading(true);
-
-      // Crear preview
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
-
-      // Redimensionar imagen si es necesario
       let fileToUpload = file;
-      if (file.size > 1024 * 1024) { // Si es mayor a 1MB, redimensionar
+      if (file.size > 1024 * 1024) {
         fileToUpload = await ImageService.resizeImage(file, maxWidth, maxHeight);
       }
-
-      // Subir imagen
-      const imageUrl = await ImageService.uploadImage({
-        bucket,
-        userId,
-        file: fileToUpload
-      });
-
-      // Actualizar perfil
+      const imageUrl = await ImageService.uploadImage({ bucket, userId, file: fileToUpload });
       const imageType = bucket === 'avatars' ? 'avatar_url' : 'hero_image_url';
       await ImageService.updateProfileImageUrl(userId, imageType, imageUrl);
-
-      // Notificar éxito
       onImageUploaded(imageUrl);
-      setPreview(null);
-
+      if (autoUpload === false) {
+        // Mantener preview pero limpiar selectedFile (ya subida)
+        setSelectedFile(null);
+      } else {
+        setPreview(null);
+      }
     } catch (err) {
       console.error('Error uploading image:', err);
       setError(err instanceof Error ? err.message : 'Error al subir imagen');
-      setPreview(null);
     } finally {
       setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await processSelectedFile(file);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    if (uploading) return;
+    const file = e.dataTransfer.files?.[0];
+    if (file) await processSelectedFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
   };
 
   const handleRemovePreview = () => {
@@ -126,7 +137,12 @@ export function ImageUploader({
       </label>
 
       {/* Área de upload */}
-    <div className={`relative border-2 border-dashed border-gray-300 rounded-lg p-4 transition-colors hover:border-blue-400 ${getAspectRatioClass()}`} style={{ minHeight }}>
+      <div
+        className={`relative border-2 border-dashed border-gray-300 rounded-lg p-4 transition-colors hover:border-blue-400 ${getAspectRatioClass()} ${uploading ? 'opacity-70' : ''}`}
+        style={{ minHeight }}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
         {displayImage ? (
           // Mostrar imagen actual o preview
       <div className="relative w-full h-full">
@@ -137,25 +153,28 @@ export function ImageUploader({
             />
             
             {/* Overlay con botones */}
-            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center space-x-4">
+            <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-3 p-2">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
-              >
-                Cambiar
-              </button>
-              
+                className="bg-white/90 backdrop-blur text-gray-800 px-3 py-1.5 rounded-md text-xs font-medium hover:bg-white transition"
+              >Cambiar</button>
+              {preview && autoUpload === false && selectedFile && (
+                <button
+                  type="button"
+                  onClick={() => performUpload()}
+                  disabled={uploading}
+                  className="bg-emerald-600 text-white px-3 py-1.5 rounded-md text-xs font-medium hover:bg-emerald-700 transition"
+                >{uploading ? 'Subiendo...' : 'Subir'}</button>
+              )}
               {preview && (
                 <button
                   type="button"
                   onClick={handleRemovePreview}
                   disabled={uploading}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+                  className="bg-red-500 text-white px-3 py-1.5 rounded-md text-xs font-medium hover:bg-red-600 transition"
+                ><X className="h-4 w-4" /></button>
               )}
             </div>
 
@@ -182,6 +201,9 @@ export function ImageUploader({
             <p className="text-xs text-gray-400 text-center">
               PNG, JPG, WebP hasta {bucket === 'avatars' ? '5MB' : '10MB'}
             </p>
+            {autoUpload === false && (
+              <p className="text-[10px] mt-2 text-gray-400">También puedes arrastrar el archivo.</p>
+            )}
           </div>
         )}
 
@@ -208,6 +230,9 @@ export function ImageUploader({
         <p>• Formatos soportados: JPEG, PNG, WebP</p>
         <p>• Tamaño máximo: {bucket === 'avatars' ? '5MB' : '10MB'}</p>
         <p>• Se redimensionará automáticamente si es necesario</p>
+        {autoUpload === false && selectedFile && !uploading && (
+          <p className="text-emerald-600 mt-1">Archivo listo para subir (haz clic en Subir sobre la imagen).</p>
+        )}
       </div>
     </div>
   );

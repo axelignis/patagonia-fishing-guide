@@ -64,8 +64,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-cottonbro-4830248.jpg',
     coverImage: '/images/silueta-de-un-hombre-pescando-en-la-playa-al-atardecer.jpg',
     rating: 4.9,
-    totalReviews: 127,
-    pricePerDay: 25000,
+  totalReviews: 127,
     languages: ['Español', 'Inglés'],
     certifications: ['Guía Profesional de Pesca', 'Primeros Auxilios', 'Navegación Fluvial'],
     services: [
@@ -103,8 +102,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-gasparzaldo-11250845.jpg',
     coverImage: '/images/pexels-lum3n-44775-294674.jpg',
     rating: 4.8,
-    totalReviews: 89,
-    pricePerDay: 22000,
+  totalReviews: 89,
     languages: ['Español', 'Inglés', 'Portugués'],
     certifications: ['Capitán de Yate', 'Guía de Turismo', 'Buceo Certificado'],
     services: [
@@ -132,8 +130,7 @@ export const guides: Guide[] = [
     avatar: '/images/hombre-mayor-pesca-por-un-lago.jpg',
     coverImage: '/images/pexels-thomas-svensson-1505611-3004745.jpg',
     rating: 5.0,
-    totalReviews: 203,
-    pricePerDay: 35000,
+  totalReviews: 203,
     languages: ['Español', 'Inglés'],
     certifications: ['Guía Master', 'Instructor de Pesca', 'Conservación Marina'],
     services: [
@@ -161,8 +158,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-arch-1165125.jpg',
     coverImage: '/images/pexels-gasparzaldo-11315286.jpg',
     rating: 4.7,
-    totalReviews: 54,
-    pricePerDay: 20000,
+  totalReviews: 54,
     languages: ['Español', 'Inglés', 'Francés'],
     certifications: ['Guía Junior', 'Fotografía de Naturaleza'],
     services: [
@@ -190,8 +186,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-pixabay-39854.jpg',
     coverImage: '/images/pexels-d123x-848737.jpg',
     rating: 4.6,
-    totalReviews: 71,
-    pricePerDay: 27000,
+  totalReviews: 71,
     languages: ['Español', 'Inglés', 'Alemán'],
     certifications: ['Supervivencia en Hielo', 'Rescate Acuático', 'Guía de Montaña'],
     services: [
@@ -219,8 +214,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-martin-que-243128669-30179791.jpg',
     coverImage: '/images/pexels-szafran-18894390.jpg',
     rating: 4.9,
-    totalReviews: 98,
-    pricePerDay: 30000,
+  totalReviews: 98,
     languages: ['Español', 'Inglés'],
     certifications: ['Capitán de Altura', 'Radar y GPS', 'Pesca Deportiva Avanzada'],
     services: [
@@ -248,8 +242,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-pixabay-301738.jpg',
     coverImage: '/images/hombre-pescando-en-el-rio.jpg',
     rating: 4.8,
-    totalReviews: 76,
-    pricePerDay: 24000,
+  totalReviews: 76,
     languages: ['Español', 'Inglés', 'Italiano'],
     certifications: ['Biología Marina', 'Guía Naturalista', 'Conservación Acuática'],
     services: [
@@ -277,8 +270,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-cottonbro-4828253.jpg',
     coverImage: '/images/pexels-pixabay-39854.jpg',
     rating: 4.7,
-    totalReviews: 112,
-    pricePerDay: 23000,
+  totalReviews: 112,
     languages: ['Español', 'Inglés'],
     certifications: ['Pesca Deportiva Marina', 'Navegación Costera', 'Meteorología'],
     services: [
@@ -306,8 +298,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-thomas-svensson-1505611-3004745.jpg',
     coverImage: '/images/pexels-gasparzaldo-11250845.jpg',
     rating: 4.5,
-    totalReviews: 43,
-    pricePerDay: 19000,
+  totalReviews: 43,
     languages: ['Español', 'Inglés', 'Mapudungun'],
     certifications: ['Guía de Montaña', 'Cultura Mapuche', 'Trekking'],
     services: [
@@ -335,8 +326,7 @@ export const guides: Guide[] = [
     avatar: '/images/pexels-gasparzaldo-11315286.jpg',
     coverImage: '/images/silueta-de-un-hombre-pescando-en-la-playa-al-atardecer.jpg',
     rating: 4.9,
-    totalReviews: 134,
-    pricePerDay: 32000,
+  totalReviews: 134,
     languages: ['Español', 'Inglés', 'Noruego'],
     certifications: ['Capitán Profesional', 'Navegación Polar', 'Rescate Marítimo'],
     services: [

@@ -4,7 +4,6 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import VantaCalmSea from '../components/VantaCalmSea';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { SponsorsSection } from '../components/SponsorsSection';
-import { PriceDisplay } from '../components/PriceDisplay';
 import guidesData from '../data/guides.json';
 import { Guide } from '../types';
 import { useAuth } from '../hooks/useAuth';
@@ -272,20 +271,10 @@ const Home: React.FC = () => {
                                     ))}
                                 </div>
                                 
-                                {/* Experiencia y Precio */}
-                                <div className="mb-4 space-y-3">
-                                    <div className="text-slate-600 text-sm">
+                                {/* Experiencia */}
+                                <div className="mb-4">
+                                    <div className="text-slate-600 text-sm text-center">
                                         {guide.experience} años de experiencia
-                                    </div>
-                                    <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 p-3 rounded-xl border border-emerald-200">
-                                        <div className="flex items-center justify-between">
-                                            <PriceDisplay 
-                                                price={guide.pricePerDay}
-                                                size="md"
-                                                showBothCurrencies={true}
-                                            />
-                                            <span className="text-slate-600 text-sm font-medium">/día</span>
-                                        </div>
                                     </div>
                                 </div>
                                 <Link to={`/guia/${guide.id}`} className="w-full bg-gradient-to-r from-emerald-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:from-emerald-500 hover:to-cyan-500 transition-all duration-300 text-center block">
