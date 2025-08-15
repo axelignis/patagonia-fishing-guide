@@ -1,56 +1,136 @@
-# Patagonia Fishing Guide
+# Patagonia Fishing Guide 🎣
 
-Welcome to the Patagonia Fishing Guide project! This web application offers fishing guide services in the stunning lakes and rivers of Patagonia. Our goal is to connect fishing enthusiasts with experienced guides who can provide unforgettable fishing experiences.
+> **Beast Mode Activated** 🚀 - Aplicación de guías de pesca de Patagonia con componentes avanzados y sistema de monitoreo en tiempo real.
 
-## Table of Contents
+Una plataforma web moderna que conecta entusiastas de la pesca con guías experimentados en los lagos y ríos de la Patagonia, con un sistema de administración completo y características avanzadas de desarrollo.
 
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Setup Instructions](#setup-instructions)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+## ✨ Características Principales
 
-## Features
+### 🎯 Para Usuarios
+- **Explorar Guías** - Catálogo completo de guías de pesca con perfiles detallados
+- **Sistema de Filtros** - Búsqueda por ubicación, especialidad y precio
+- **Información Detallada** - Perfiles con experiencia, servicios y reseñas
+- **Diseño Responsive** - Optimizado para todos los dispositivos
+- **Interfaz Intuitiva** - Navegación fluida y moderna
 
-- Browse a list of experienced fishing guides in Patagonia.
-- Detailed profiles for each guide, including their experience and available services.
-- Responsive design for optimal viewing on all devices.
-- Easy navigation between different pages (Home, About).
-- API integration to fetch guides and services dynamically.
+### 👨‍💼 Para Administradores  
+- **Panel de Administración** - Gestión completa de guías y servicios
+- **Autenticación Segura** - Sistema de login con Supabase Auth
+- **Gestión de Imágenes** - Carga y administración de fotos
+- **Analytics** - Estadísticas de uso y performance
 
-## Technologies Used
+### 🚀 Beast Mode (Desarrollo)
+- **Panel de Desarrollo** - Métricas en tiempo real y debugging
+- **Monitor de Performance** - CPU, memoria y network requests
+- **Consola SQL** - Ejecución directa de queries
+- **Animaciones Avanzadas** - Sistema de animaciones CSS optimizado
+- **Componentes Premium** - UI library con efectos glassmorphism
 
-- React: A JavaScript library for building user interfaces.
-- TypeScript: A typed superset of JavaScript that compiles to plain JavaScript.
-- CSS: For styling the application.
-- Axios: For making HTTP requests to fetch data from APIs.
-- Supabase: Postgres + Auth + Storage for admin and guide management.
-- React Query: Data fetching and caching.
+## 🛠️ Tecnologías
+
+### Frontend
+- **React 17.0.2** - Framework principal
+- **TypeScript** - Tipado estático
+- **Tailwind CSS** - Framework CSS utilitario
+- **Framer Motion** - Animaciones avanzadas
+
+### Backend & Database
+- **Supabase** - Backend-as-a-Service
+  - PostgreSQL database
+  - Authentication
+  - Storage
+  - Real-time subscriptions
+
+### Performance & Monitoring
+- **Custom Performance Hooks** - Monitoreo de métricas
+- **Network Interception** - Tracking de requests
+- **Memory Profiling** - Análisis de uso de memoria
 
 ## Setup Instructions
+## 🚀 Setup Rápido
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/patagonia-fishing-guide.git
-   ```
-2. Navigate to the project directory:
-   ```
-   cd patagonia-fishing-guide
-   ```
-3. Install the dependencies:
-   ```
-   npm install
-   ```
-4. Start the development server:
-   ```
-   npm start
-   ```
+### 1. Clonar e Instalar
+```bash
+git clone https://github.com/yourusername/patagonia-fishing-guide.git
+cd patagonia-fishing-guide
+npm install
+```
 
-5. Environment variables for Supabase (create `.env.local`):
-   ```
-   REACT_APP_SUPABASE_URL=your_supabase_url
-   REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+### 2. Configurar Variables de Entorno
+Crear `.env.local`:
+```env
+REACT_APP_SUPABASE_URL=your_supabase_url
+REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
+
+### 3. Configurar Base de Datos
+```bash
+# Ejecutar setup inicial (ver docs/SUPABASE_SETUP.md)
+# Poblar con datos de prueba
+node scripts/seed/seed-guides.js
+```
+
+### 4. Iniciar Desarrollo
+```bash
+npm start
+# Beast Mode disponible en desarrollo
+```
+
+## 📁 Estructura del Proyecto
+
+```
+patagonia-fishing-guide/
+├── docs/                    # Documentación
+├── public/                  # Assets estáticos
+├── scripts/                 # Scripts organizados
+│   ├── setup/              # Configuración BD
+│   ├── seed/               # Datos de prueba
+│   └── utils/              # Utilidades
+├── src/
+│   ├── components/         # Componentes React
+│   │   ├── beast-mode/    # Panel Beast Mode
+│   │   └── ui/            # UI Components
+│   ├── hooks/             # Custom hooks
+│   ├── pages/             # Páginas principales
+│   ├── services/          # API services
+│   ├── styles/           # CSS y estilos
+│   └── types/            # TypeScript types
+```
+
+## 🎮 Beast Mode
+
+Activa el modo de desarrollo avanzado:
+
+```javascript
+// En cualquier componente
+const [beastMode, setBeastMode] = useState(true);
+```
+
+### Características Beast Mode:
+- 📊 **Métricas en tiempo real**
+- 🔍 **SQL Console integrada**  
+- ⚡ **Monitor de performance**
+- 🧪 **Stress testing tools**
+- 🎨 **Componentes con glassmorphism**
+
+## 📚 Documentación
+
+- [Beast Mode Components](./docs/BEAST_MODE_COMPONENTS.md)
+- [Supabase Setup](./docs/SUPABASE_SETUP.md)
+- [Scripts README](./scripts/README.md)
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crear feature branch (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push al branch (`git push origin feature/nueva-funcionalidad`)
+5. Abrir Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Ver `LICENSE` para más detalles.
    ```
 
 6. Optional: Seed guides to Supabase from local JSON:

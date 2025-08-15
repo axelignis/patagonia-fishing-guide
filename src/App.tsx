@@ -23,6 +23,7 @@ import Register from './pages/admin/Register';
 import AuthCallback from './pages/admin/AuthCallback';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
+import BeastModePanel from './components/beast-mode/BeastModePanel';
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({
@@ -67,6 +68,9 @@ function App() {
               </Routes>
             </div>
             <Footer />
+            
+            {/* 🔥 Beast Mode Panel */}
+            <BeastModePanel />
           </div>
         </Router>
       </AuthProvider>
