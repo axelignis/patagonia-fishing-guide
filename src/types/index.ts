@@ -10,6 +10,7 @@ export interface Guide {
     coverImage: string;
     rating: number;
     totalReviews: number;
+    pricePerDay?: number;
     languages: string[];
     certifications: string[];
     services: Service[];

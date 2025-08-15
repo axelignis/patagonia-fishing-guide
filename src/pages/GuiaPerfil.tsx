@@ -41,8 +41,10 @@ const GuiaPerfil: React.FC = () => {
                         specialties: g.specialties ?? [],
                         location: g.location ?? 'Patagonia',
                         bio: g.bio ?? '',
+                        // Prioridad avatar: user_profiles.avatar_url (vista puede exponer como avatar_url) -> legacy guides.avatar_url -> default
                         avatar: (g as any).avatar_url || g.user_profiles?.avatar_url || '/images/pexels-pixabay-301738.jpg',
-                        coverImage: (g as any).hero_image_url || g.user_profiles?.hero_image_url || '/images/pexels-gasparzaldo-11250845.jpg',
+                        // Prioridad cover: hero_image (nuevo) -> legacy cover_url -> fallback a avatar (por estética) -> default cover
+                        coverImage: (g as any).hero_image_url || g.user_profiles?.hero_image_url || (g as any).cover_url || (g as any).avatar_url || g.user_profiles?.avatar_url || '/images/pexels-gasparzaldo-11250845.jpg',
                         rating: Number(g.rating ?? 0),
                         totalReviews: Number(g.total_reviews ?? 0),
                         // price removed
