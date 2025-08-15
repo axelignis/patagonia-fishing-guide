@@ -21,8 +21,7 @@ const Guias: React.FC = () => {
         region_code: locationCodes.region,
         province_code: locationCodes.province,
         commune_code: locationCodes.commune,
-        is_active: true,
-        requires_service: true,
+        // is_active y requires_service se quitaron para evitar lista vacía cuando los seeds no tienen servicios ni is_active=true
     }), [search, locationCodes]);
 
     useEffect(() => {
@@ -33,6 +32,8 @@ const Guias: React.FC = () => {
             try {
                 const dbGuides = await listGuides(serverFilters);
                 if (cancelled) return;
+                const DEFAULT_AVATAR = '/images/pexels-pixabay-301738.jpg';
+                const DEFAULT_COVER = '/images/pexels-gasparzaldo-11250845.jpg';
                 const mapped: Guide[] = (dbGuides || []).map((g: any) => ({
                     id: g.id,
                     name: g.name,
@@ -41,9 +42,9 @@ const Guias: React.FC = () => {
                     specialties: g.specialties ?? [],
                     location: g.location ?? 'Patagonia',
                     bio: g.bio ?? '',
-                    // Priorizar campos nuevos en user_profiles (si la vista los expone) y luego legacy
-                    avatar: g.avatar_url || g.user_profiles?.avatar_url || '/images/pexels-pixabay-301738.jpg',
-                    coverImage: g.hero_image_url || g.user_profiles?.hero_image_url || g.cover_url || g.avatar_url || '/images/pexels-pixabay-301738.jpg',
+                    // Orden de prioridad: vista (hero/avatar) -> user_profiles -> legacy -> default
+                    avatar: g.avatar_url || g.user_profiles?.avatar_url || g.legacy_avatar_url || DEFAULT_AVATAR,
+                    coverImage: g.hero_image_url || g.user_profiles?.hero_image_url || g.cover_url || g.avatar_url || g.user_profiles?.avatar_url || DEFAULT_COVER,
                     rating: Number(g.rating ?? 0),
                     totalReviews: Number(g.total_reviews ?? 0),
                     // price removed

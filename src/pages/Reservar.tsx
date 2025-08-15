@@ -70,6 +70,8 @@ const Reservar: React.FC = () => {
                         maxPeople: s.max_people ?? 1,
                         includes: s.includes ?? []
                     }));
+                    const DEFAULT_AVATAR = '/images/pexels-pixabay-301738.jpg';
+                    const DEFAULT_COVER = '/images/pexels-gasparzaldo-11250845.jpg';
                     const mapped: Guide = {
                         id: g.id,
                         name: g.name,
@@ -78,8 +80,10 @@ const Reservar: React.FC = () => {
                         specialties: g.specialties ?? [],
                         location: g.location ?? 'Patagonia',
                         bio: g.bio ?? '',
-                        avatar: (g as any).avatar_url || (g as any).user_profiles?.avatar_url || (g as any).legacy_avatar_url || '/images/pexels-pixabay-301738.jpg',
-                        coverImage: (g as any).hero_image_url || (g as any).user_profiles?.hero_image_url || (g as any).cover_url || (g as any).avatar_url || '/images/pexels-gasparzaldo-11250845.jpg',
+                        // Avatar prioridad: vista/avatar_url -> user_profiles.avatar_url -> legacy -> default
+                        avatar: (g as any).avatar_url || (g as any).user_profiles?.avatar_url || (g as any).legacy_avatar_url || DEFAULT_AVATAR,
+                        // Cover prioridad: hero_image_url -> user_profiles.hero_image_url -> cover_url -> avatar -> default
+                        coverImage: (g as any).hero_image_url || (g as any).user_profiles?.hero_image_url || (g as any).cover_url || (g as any).avatar_url || (g as any).user_profiles?.avatar_url || DEFAULT_COVER,
                         rating: Number(g.rating ?? 0),
                         totalReviews: Number(g.total_reviews ?? 0),
                         // price removed

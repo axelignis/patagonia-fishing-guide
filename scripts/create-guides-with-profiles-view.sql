@@ -17,11 +17,12 @@ SELECT
   g.region_code,
   g.province_code,
   g.commune_code,
-  -- Campos de imágenes (pueden no existir en guides directamente)
-  up.avatar_url,
-  up.hero_image_url,
-  -- Mantener cover_url / avatar_url originales si existían
-  g.cover_url,
+  -- Imagen de avatar final priorizando perfil; si RLS bloquea user_profiles cae a guides.avatar_url
+  COALESCE(up.avatar_url, g.avatar_url) AS avatar_url,
+  -- Imagen de hero/cover final priorizando hero del perfil, luego cover_url (legacy), luego avatar para evitar vacío
+  COALESCE(up.hero_image_url, g.cover_url, up.avatar_url, g.avatar_url) AS hero_image_url,
+  -- Campos legacy expuestos para depuración
+  g.cover_url AS legacy_cover_url,
   g.avatar_url AS legacy_avatar_url
 FROM public.guides g
 LEFT JOIN public.user_profiles up ON up.user_id = g.user_id;
@@ -29,5 +30,5 @@ LEFT JOIN public.user_profiles up ON up.user_id = g.user_id;
 -- Permisos básicos (si usas RLS en guides, la vista hereda; si no, abrir SELECT público según necesidad)
 GRANT SELECT ON public.guides_with_profiles TO anon, authenticated;
 
--- Nota: Si RLS está habilitado en guides o user_profiles y deseas exponer campos públicos,
--- asegúrate de tener políticas SELECT adecuadas allí. Las vistas solo reflejan lo permitido.
+-- Nota: Con COALESCE se evita perder la imagen sincronizada en guides si RLS impide leer user_profiles.
+-- Asegura tener políticas SELECT en guides para columnas avatar_url/cover_url si quieres mostrarlas públicamente.

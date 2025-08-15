@@ -296,20 +296,20 @@ export default function GuidePanel(): JSX.Element {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-slate-800">Mi Perfil</h2>
             {guide && !isEditing && (
-              <button
-                onClick={handleEdit}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-              >
-                Editar Perfil
-              </button>
-            )}
-            {guide && !isEditing && (
-              <button
-                onClick={() => setShowDeleteDialog(true)}
-                className="ml-3 px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
-              >
-                Eliminar Perfil
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleEdit}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                >
+                  Editar Perfil
+                </button>
+                <button
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                >
+                  Eliminar Perfil
+                </button>
+              </div>
             )}
           </div>
 
